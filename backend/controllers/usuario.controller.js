@@ -84,6 +84,44 @@ export const getUsuarios = async (req, res) => {
   }
 }
 
+export const getUsuariosFiltered = async (req, res) => {
+  const { idinf, idsup, nombre, tipo } = req.body
+  try {
+    let sql = `SELECT * FROM usuario WHERE `
+    const values = []
+    if (idinf) {
+      sql += `lower(idusuario) >= lower(?) AND `
+      values.push(idinf)
+    }
+
+    if (idsup) {
+      sql += `lower(idusuario) <= lower(?) AND `
+      values.push(idsup)
+    }
+
+    if (nombre) {
+      sql += `lower(nombre) LIKE CONCAT('%', lower(?), '%') AND `
+      values.push(nombre)
+    }
+    if (tipo) {
+      const tipos = tipo.split(',').map(tipo => tipo.trim())
+      sql += `tipo IN (${tipos.map(() => '?').join(', ')}) AND `
+      values.push(...tipos)
+    }
+    if (values.length !== 0) {
+      sql = sql.slice(0, -4)
+    }else{
+      sql = sql.slice(0, -7)
+    }
+    sql += ` ORDER BY idusuario ASC`
+    const [results] = await pool.query(sql, values)
+    res.status(200).json(results)
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ error: error.message })
+  }
+}
+
 export const getUsuarioById = async (req, res) => {
   const { id } = req.params
   try {
