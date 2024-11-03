@@ -1,24 +1,11 @@
-import mysql from 'mysql'
+import { createPool } from "mysql2/promise"
 
-export async function connectDB(config) {
-  const connection = mysql.createConnection({
-    host: config.host,
-    user: config.user,
-    password: config.password,
-    database: config.database,
-    port: config.port,
-    dateStrings: true,
-    timezone: 'utc-6',
-    multipleStatements: true
-  })
-  await connection.connect((err) => {
-    if (err) {
-      console.error('Error connecting to database: ', err)
-      return
-    }
-    console.log('Connected to database')
-  })
-  connection.on('error', (err) => {
-    console.error('Database error: ', err)
-  })
-}
+export const pool = createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT,
+  dateStrings: true,
+  timezone: '-06:00'
+})
