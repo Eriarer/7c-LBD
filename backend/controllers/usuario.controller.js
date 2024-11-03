@@ -37,41 +37,41 @@ export const deleteUsuario = async (req, res) => {
 }
 
 export const updateUsuario = async (req, res) => {
-  const { id } = req.params;
-  const { newId, tipo, nombre } = req.body;
+  const { id } = req.params
+  const { newId, tipo, nombre } = req.body
 
-  let sql = `UPDATE usuario SET `;
-  const values = [];
+  let sql = `UPDATE usuario SET `
+  const values = []
 
   if (newId !== null && newId !== undefined) {
-    sql += `idusuario = ?, `;
-    values.push(newId);
+    sql += `idusuario = ?, `
+    values.push(newId)
   }
   if (tipo !== null && tipo !== undefined) {
-    sql += `tipo = ?, `;
-    values.push(tipo);
+    sql += `tipo = ?, `
+    values.push(tipo)
   }
   if (nombre !== null && nombre !== undefined) {
-    sql += `nombre = ?, `;
-    values.push(nombre);
+    sql += `nombre = ?, `
+    values.push(nombre)
   }
 
   if (values.length === 0) {
-    return res.status(400).json({ error: 'Request body is empty' });
+    return res.status(400).json({ error: 'Request body is empty' })
   }
 
-  sql = sql.slice(0, -2); 
-  sql += ` WHERE idusuario = ?`;
-  values.push(id);
+  sql = sql.slice(0, -2) 
+  sql += ` WHERE idusuario = ?`
+  values.push(id)
 
   try {
-    const [results] = await pool.query(sql, values);
-    res.status(200).json(results);
+    const [results] = await pool.query(sql, values)
+    res.status(200).json(results)
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: error.message });
+    console.log(error)
+    res.status(500).json({ error: error.message })
   }
-};
+}
 
 
 export const getUsuarios = async (req, res) => {
