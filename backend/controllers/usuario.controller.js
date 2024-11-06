@@ -2,7 +2,7 @@ import { pool } from '../db/db.js'
 
 export const addUsuario = async (req, res) => {
   const { idusuario, tipo, nombre } = req.body
-  try{
+  try {
     const sql = `INSERT INTO usuario (idusuario, tipo, nombre) VALUES (?, ?, ?)`
     const [result] = await pool.query(sql, [idusuario, tipo, nombre])
     res.status(201).json(result)
@@ -25,20 +25,19 @@ export const deleteUsuarios = async (req, res) => {
 }
 
 export const deleteUsuario = async (req, res) => {
-    const { id } = req.params
-    try {
-        const sql = `DELETE FROM usuario WHERE idusuario = ?`
-        const [results] = await pool.query(sql, [id])
-        res.status(200).json(results)
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({ error: error.message })
-    }
+  const { id } = req.params
+  try {
+    const sql = `DELETE FROM usuario WHERE idusuario = ?`
+    const [results] = await pool.query(sql, [id])
+    res.status(200).json(results)
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ error: error.message })
+  }
 }
 
 export const updateUsuario = async (req, res) => {
-  const { id } = req.params
-  const { newId, tipo, nombre } = req.body
+  const { id, newId, tipo, nombre } = req.body
 
   let sql = `UPDATE usuario SET `
   const values = []
@@ -60,7 +59,7 @@ export const updateUsuario = async (req, res) => {
     return res.status(400).json({ error: 'Request body is empty' })
   }
 
-  sql = sql.slice(0, -2) 
+  sql = sql.slice(0, -2)
   sql += ` WHERE idusuario = ?`
   values.push(id)
 
@@ -85,7 +84,7 @@ export const getUsuarios = async (req, res) => {
 }
 
 export const getUsuariosFiltered = async (req, res) => {
-  const { idinf, idsup, nombre, tipo } = req.body
+  const { idinf, idsup, nombre, tipo, cas_seneitive } = req.body
   try {
     let sql = `SELECT * FROM usuario WHERE `
     const values = []
@@ -100,7 +99,8 @@ export const getUsuariosFiltered = async (req, res) => {
     }
 
     if (nombre) {
-      sql += `lower(nombre) LIKE CONCAT('%', lower(?), '%') AND `
+      if (cas_seneitive) sql += `nombre LIKE BINARY CONCAT('%', ?, '%') AND `
+      else sql += `lower(nombre) LIKE CONCAT('%', lower(?), '%') AND `
       values.push(nombre)
     }
     if (tipo) {
@@ -110,7 +110,7 @@ export const getUsuariosFiltered = async (req, res) => {
     }
     if (values.length !== 0) {
       sql = sql.slice(0, -4)
-    }else{
+    } else {
       sql = sql.slice(0, -7)
     }
     sql += ` ORDER BY idusuario ASC`
