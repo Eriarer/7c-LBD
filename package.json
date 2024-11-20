@@ -26,5 +26,11 @@
     "eslint": "^8.57.1",
     "nodemon": "^3.1.7",
     "standard": "^17.1.2"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "none",
+    "tabWidth": 2
   }
 }
