@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import app from './app.js'
-import { appConfig } from './config.js'
+import { appConfig } from './config/config.js'
 
 async function init(appConfig) {
   try {
