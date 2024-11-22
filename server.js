@@ -2,7 +2,7 @@ import 'dotenv/config'
 import app from './app.js'
 import { appConfig } from './config/config.js'
 
-async function init(appConfig) {
+async function init (appConfig) {
   try {
     app.listen(appConfig.port, () => {
       console.log(`App is running on http://localhost:${appConfig.port}`)
