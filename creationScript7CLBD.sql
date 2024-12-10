@@ -98,8 +98,8 @@ CREATE TABLE IF NOT EXISTS `lab_managment`.`lab_res` (
         `idlaboratorio`,
         `idresponsable`
     ),
-    INDEX `fk_lab_res_responsable` (`idresponsable` ASC) VISIBLE,
-    INDEX `fk_lab_res_laboratorio` (`idlaboratorio` ASC) VISIBLE,
+    INDEX `fk_lab_res_responsable` (`idresponsable` ASC) VISIBLE ON UPDATE CASCADE,
+    INDEX `fk_lab_res_laboratorio` (`idlaboratorio` ASC) VISIBLE ON UPDATE CASCADE,
     CONSTRAINT `fk_lab_res_laboratorio` FOREIGN KEY (`idlaboratorio`) REFERENCES `lab_managment`.`laboratorio` (`idlaboratorio`),
     CONSTRAINT `fk_lab_res_responsable` FOREIGN KEY (`idresponsable`) REFERENCES `lab_managment`.`responsable` (`idresponsable`)
 ) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
@@ -267,9 +267,9 @@ TRIGGER `lab_managment`.`prestamo_BEFORE_INSERT`
 BEFORE INSERT ON `lab_managment`.`prestamo`
 FOR EACH ROW
 BEGIN
-	IF NEW.fecha < CURDATE() THEN
+	IF NEW.fecha < CURDATE() OR NEW.fecha > DATE_ADD(CURDATE(), INTERVAL 14 DAY) THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Cannot create a prestamo with a date before today';
+        SET MESSAGE_TEXT = 'No se pudo crear el préstamo. Es menor a la fecha actual o ya transcurrio el plazo de 14 días.';
     END IF;
 END$$
 
