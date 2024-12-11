@@ -1,8 +1,9 @@
 openapi: 3.0.0
 info:
   title: Manejo de Laboratorios API
-  version: 0.1.0
+  version: 0.2.0
   description: REST API para el manejo de laboratorios de la Universidad Autónoma de Aguascalientes
+
 components:
   schemas:
     Usuario:
@@ -33,23 +34,24 @@ components:
           example: Ingeniería
         correo:
           type: string
-          description: Correo del usuario
+          description: Correo electrónico del usuario
           format: email
           example: juan.perez@example.com
         tipo:
           type: string
           description: Tipo de usuario
-          pattern: '^[MAE]$'
+          enum: [A, M, E] # A = Administrador, M = Maestro, E = Estudiante
           example: E
         activo:
-          type: string
-          description: Estado activo del usuario
-          example: 'true'
+          type: boolean
+          description: Estado de actividad del usuario
+          example: true
       required:
         - idusuario
         - nombre
         - correo
         - tipo
+
 paths:
   /usuario/create:
     post:
@@ -61,22 +63,29 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Usuario'
-            examples:
-              usuarioEjemplo:
-                summary: Ejemplo de un nuevo usuario
-                value:
-                  idusuario: '00000'
-                  nombre: Juan
-                  apellido: Pérez
-                  carrera: Ingeniería
-                  correo: juan.perez@example.com
-                  tipo: E
-                  activo: 'true'
+            example:
+              idusuario: '00000'
+              nombre: Juan
+              apellido: Pérez
+              carrera: Ingeniería
+              correo: juan.perez@example.com
+              tipo: E
+              activo: true
       responses:
         '201':
+          status: success
           description: Usuario creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+              example:
+                - status: 'success'
+                - message: Usuario creado exitosamente
         '500':
+          status: error
           description: Error al crear el usuario
+
   /usuario/update/{id}:
     patch:
       summary: Actualizar un usuario
@@ -94,21 +103,26 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Usuario'
-            examples:
-              usuarioActualizado:
-                summary: Ejemplo de un usuario actualizado
-                value:
-                  nombre: Juan
-                  apellido: Pérez
-                  carrera: Ingeniería
-                  correo: juan.perez@example.com
-                  tipo: E
-                  activo: true
+            example:
+              nombre: Juan
+              apellido: Pérez
+              carrera: Ingeniería
+              correo: juan.perez@example.com
+              tipo: E
+              activo: true
       responses:
         '200':
           description: Usuario actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+              example:
+                - status: 'success'
+                - message: Usuario actualizado exitosamente
         '500':
           description: Error al actualizar el usuario
+
   /usuario/delete/{id}:
     delete:
       summary: Eliminar un usuario
@@ -123,8 +137,11 @@ paths:
       responses:
         '200':
           description: Usuario eliminado exitosamente
+        '404':
+          description: Usuario no encontrado
         '500':
           description: Error al eliminar el usuario
+
   /usuario/find:
     get:
       summary: Obtener todos los usuarios
@@ -138,10 +155,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Usuario'
-              examples:
-                listaUsuarios:
-                  summary: Ejemplo de una lista de usuarios
-                  value:
+              example:
+                - status: 'success'
+                - data:
                     - idusuario: '12345'
                       nombre: Juan
                       apellido: Pérez
@@ -158,6 +174,7 @@ paths:
                       activo: true
         '500':
           description: Error al obtener los usuarios
+
   /usuario/find/{id}:
     get:
       summary: Obtener un usuario por ID
@@ -176,10 +193,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Usuario'
-              examples:
-                usuarioEncontrado:
-                  summary: Ejemplo de un usuario encontrado
-                  value:
+              example:
+                - status: 'success'
+                - data:
                     idusuario: '12345'
                     nombre: Juan
                     apellido: Pérez
@@ -187,5 +203,7 @@ paths:
                     correo: juan.perez@example.com
                     tipo: E
                     activo: true
+        '404':
+          description: Usuario no encontrado
         '500':
           description: Error al obtener el usuario

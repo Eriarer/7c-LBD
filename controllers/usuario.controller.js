@@ -149,7 +149,10 @@ export const getUsuarioById = async (req, res) => {
   try {
     const sql = 'SELECT * FROM usuario WHERE idusuario = ?'
     const [results] = await pool.query(sql, [id])
-    res.status(200).json(results)
+    if (!results || results.length === 0) {
+      throw new Error('No se encontró el usuario')
+    }
+    res.status(200).json({ status: 'success', data: results[0] })
   } catch (error) {
     console.log(error)
     res.status(500).json({ error: error.message })
