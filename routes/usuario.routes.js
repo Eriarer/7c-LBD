@@ -21,6 +21,7 @@ router.delete('/delete/:id', deleteUsuario)
 router.patch('/update/:id', validateSchema(updateUsuarioSchema), updateUsuario)
 
 router.get('/find', getUsuarios)
+
 router.get('/find/:id', getUsuarioById)
 
 export default router

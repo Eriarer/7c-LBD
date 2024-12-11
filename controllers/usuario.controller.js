@@ -1,7 +1,8 @@
 import { pool } from '../db/db.js'
 
 export const addUsuario = async (req, res) => {
-  const { idusuario, nombre, apellido, carrera, correo, tipo } = req.body
+  const { idusuario, nombre, apellido, carrera, correo, tipo, activo } =
+    req.body
 
   try {
     let sql = 'INSERT INTO usuario'
@@ -33,6 +34,10 @@ export const addUsuario = async (req, res) => {
     if (tipo) {
       fields.push('tipo')
       values.push(tipo)
+    }
+    if (activo) {
+      fields.push('activo')
+      values.push(activo)
     }
     sql += ` (${fields.join(', ')}) VALUES (${fields
       .map(() => '?')
@@ -99,7 +104,7 @@ export const updateUsuario = async (req, res) => {
   }
   if (activo) {
     fields.push('activo = ?')
-    values.push(activo)
+    values.push(activo === 'true' ? 1 : 0)
   }
   if (values.length === 0) {
     return res.status(400).json({ error: 'Datos insuficientes' })

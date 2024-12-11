@@ -1,0 +1,191 @@
+openapi: 3.0.0
+info:
+  title: Manejo de Laboratorios API
+  version: 0.1.0
+  description: REST API para el manejo de laboratorios de la Universidad Autónoma de Aguascalientes
+components:
+  schemas:
+    Usuario:
+      type: object
+      properties:
+        idusuario:
+          type: string
+          description: ID del usuario
+          pattern: '^[0-9]{1,10}$'
+          example: '12345'
+        nombre:
+          type: string
+          description: Nombre del usuario
+          minLength: 4
+          maxLength: 60
+          example: Juan
+        apellido:
+          type: string
+          description: Apellido del usuario
+          minLength: 4
+          maxLength: 60
+          example: Pérez
+        carrera:
+          type: string
+          description: Carrera del usuario
+          minLength: 4
+          maxLength: 60
+          example: Ingeniería
+        correo:
+          type: string
+          description: Correo del usuario
+          format: email
+          example: juan.perez@example.com
+        tipo:
+          type: string
+          description: Tipo de usuario
+          pattern: '^[MAE]$'
+          example: E
+        activo:
+          type: string
+          description: Estado activo del usuario
+          example: 'true'
+      required:
+        - idusuario
+        - nombre
+        - correo
+        - tipo
+paths:
+  /usuario/create:
+    post:
+      summary: Crear un nuevo usuario
+      tags: [Usuarios]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usuario'
+            examples:
+              usuarioEjemplo:
+                summary: Ejemplo de un nuevo usuario
+                value:
+                  idusuario: '00000'
+                  nombre: Juan
+                  apellido: Pérez
+                  carrera: Ingeniería
+                  correo: juan.perez@example.com
+                  tipo: E
+                  activo: 'true'
+      responses:
+        '201':
+          description: Usuario creado exitosamente
+        '500':
+          description: Error al crear el usuario
+  /usuario/update/{id}:
+    patch:
+      summary: Actualizar un usuario
+      tags: [Usuarios]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID del usuario a actualizar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usuario'
+            examples:
+              usuarioActualizado:
+                summary: Ejemplo de un usuario actualizado
+                value:
+                  nombre: Juan
+                  apellido: Pérez
+                  carrera: Ingeniería
+                  correo: juan.perez@example.com
+                  tipo: E
+                  activo: true
+      responses:
+        '200':
+          description: Usuario actualizado exitosamente
+        '500':
+          description: Error al actualizar el usuario
+  /usuario/delete/{id}:
+    delete:
+      summary: Eliminar un usuario
+      tags: [Usuarios]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID del usuario a eliminar
+      responses:
+        '200':
+          description: Usuario eliminado exitosamente
+        '500':
+          description: Error al eliminar el usuario
+  /usuario/find:
+    get:
+      summary: Obtener todos los usuarios
+      tags: [Usuarios]
+      responses:
+        '200':
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Usuario'
+              examples:
+                listaUsuarios:
+                  summary: Ejemplo de una lista de usuarios
+                  value:
+                    - idusuario: '12345'
+                      nombre: Juan
+                      apellido: Pérez
+                      carrera: Ingeniería
+                      correo: juan.perez@example.com
+                      tipo: E
+                      activo: true
+                    - idusuario: '67890'
+                      nombre: Ana
+                      apellido: García
+                      carrera: Medicina
+                      correo: ana.garcia@example.com
+                      tipo: M
+                      activo: true
+        '500':
+          description: Error al obtener los usuarios
+  /usuario/find/{id}:
+    get:
+      summary: Obtener un usuario por ID
+      tags: [Usuarios]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID del usuario
+      responses:
+        '200':
+          description: Usuario encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+              examples:
+                usuarioEncontrado:
+                  summary: Ejemplo de un usuario encontrado
+                  value:
+                    idusuario: '12345'
+                    nombre: Juan
+                    apellido: Pérez
+                    carrera: Ingeniería
+                    correo: juan.perez@example.com
+                    tipo: E
+                    activo: true
+        '500':
+          description: Error al obtener el usuario

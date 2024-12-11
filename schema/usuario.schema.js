@@ -25,8 +25,9 @@ export const addUsuarioSchema = z
       .length(1, { message: 'Tipo debe ser un caracter' })
       .regex(/^[MAE]$/, { message: 'Tipo debe ser M, A o E' }),
     activo: z
-      .string()
-      .regex(/^[01]$/, { message: 'Activo debe ser 0 o 1' })
+      .string() // la regex no debe ser case sensitive
+      .regex(/^(true|false)$/i, { message: 'Activo debe ser booleano' })
+      .transform((value) => (value.toLowerCase() === 'true' ? 1 : 0))
       .optional()
   })
   .partial()
@@ -63,9 +64,8 @@ export const updateUsuarioSchema = z
       .length(1, { message: 'Tipo debe ser un caracter' })
       .regex(/^[MAE]$/, { message: 'Tipo debe ser M, A o E' })
       .optional(),
-    activo: z
-      .string()
-      .regex(/^[01]$/, { message: 'Activo debe ser 0 o 1' })
-      .optional()
+    activo: z.boolean().transform((value) => (value ? 1 : 0), {
+      message: 'Activo debe ser booleano'
+    })
   })
   .partial()
