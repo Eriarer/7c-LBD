@@ -1,5 +1,6 @@
 import express from 'express'
 import swaggerUi from 'swagger-ui-express'
+import morgan from 'morgan'
 import usuarioRoutes from './routes/usuario.routes.js'
 import responsableRoutes from './routes/responsable.routes.js'
 import swaggerSpec from './swagger.js'
@@ -7,6 +8,7 @@ import swaggerSpec from './swagger.js'
 const app = express()
 
 app.use(express.json())
+app.use(morgan('dev'))
 app.use(express.urlencoded({ extended: true }))
 
 app.use('/usuario', usuarioRoutes)
