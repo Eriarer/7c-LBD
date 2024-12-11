@@ -1,26 +1,53 @@
 import { pool } from '../db/db.js'
 
 export const addUsuario = async (req, res) => {
-  const { idusuario, tipo, nombre } = req.body
-  try {
-    const sql = 'INSERT INTO usuario (idusuario, tipo, nombre) VALUES (?, ?, ?)'
-    const [result] = await pool.query(sql, [idusuario, tipo, nombre])
-    res.status(201).json(result)
-  } catch (error) {
-    console.log(error)
-    res.status(500).json({ error: error.message })
-  }
-}
+  const { idusuario, nombre, apellido, carrera, correo, tipo } = req.body
 
-export const deleteUsuarios = async (req, res) => {
-  const { ids } = req.body
   try {
-    const sql = 'DELETE FROM usuario WHERE idusuario IN (?)'
-    const [results] = await pool.query(sql, [ids])
-    res.status(200).json(results)
+    let sql = 'INSERT INTO usuario'
+    let fields = []
+    let values = []
+    if (!idusuario) {
+      throw new Error('El id es requerido')
+    }
+    fields.push('idusuario')
+    values.push(idusuario)
+    if (!nombre) {
+      throw new Error('El nombre es requerido')
+    }
+    fields.push('nombre')
+    values.push(nombre)
+    if (!correo) {
+      throw new Error('correo is required')
+    }
+    fields.push('correo')
+    values.push(correo)
+    if (apellido) {
+      fields.push('apellido')
+      values.push(apellido)
+    }
+    if (carrera) {
+      fields.push('carrera')
+      values.push(carrera)
+    }
+    if (tipo) {
+      fields.push('tipo')
+      values.push(tipo)
+    }
+    sql += ` (${fields.join(', ')}) VALUES (${fields
+      .map(() => '?')
+      .join(', ')})`
+
+    const [result] = await pool.query(sql, values)
+
+    if (!result || result.affectedRows === 0) {
+      throw new Error('Hubo un error al crear el usuario')
+    }
+
+    res.status(201).json({ status: 'success', message: 'Usuario creado' })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ status: 'error', error: error.message })
   }
 }
 
@@ -29,95 +56,86 @@ export const deleteUsuario = async (req, res) => {
   try {
     const sql = 'DELETE FROM usuario WHERE idusuario = ?'
     const [results] = await pool.query(sql, [id])
-    res.status(200).json(results)
+
+    if (!results || results.affectedRows === 0) {
+      throw new Error('Hubo un error al eliminar el usuario')
+    }
+    res.status(200).json({ status: 'success', message: 'Usuario eliminado' })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ status: 'error', error: error.message })
   }
 }
 
 export const updateUsuario = async (req, res) => {
-  const { id, newId, tipo, nombre } = req.body
+  const { id, newId, nombre, apellido, carrera, correo, tipo, activo } =
+    req.body
 
-  let sql = 'UPDATE usuario SET '
   const values = []
-
-  if (newId !== null && newId !== undefined) {
-    sql += 'idusuario = ?, '
+  const fields = []
+  if (newId) {
+    fields.push('idusuario = ?')
     values.push(newId)
   }
-  if (tipo !== null && tipo !== undefined) {
-    sql += 'tipo = ?, '
-    values.push(tipo)
-  }
-  if (nombre !== null && nombre !== undefined) {
-    sql += 'nombre = ?, '
+  if (nombre) {
+    fields.push('nombre = ?')
     values.push(nombre)
   }
-
+  if (apellido) {
+    fields.push('apellido = ?')
+    values.push(apellido)
+  }
+  if (carrera) {
+    fields.push('carrera = ?')
+    values.push(carrera)
+  }
+  if (correo) {
+    fields.push('correo = ?')
+    values.push(correo)
+  }
+  if (tipo) {
+    fields.push('tipo = ?')
+    values.push(tipo)
+  }
+  if (activo) {
+    fields.push('activo = ?')
+    values.push(activo)
+  }
   if (values.length === 0) {
-    return res.status(400).json({ error: 'Request body is empty' })
+    return res.status(400).json({ error: 'Datos insuficientes' })
   }
 
-  sql = sql.slice(0, -2)
-  sql += ' WHERE idusuario = ?'
+  if (!id) return res.status(400).json({ error: 'Id es requerido' })
+
   values.push(id)
+
+  const sql = `UPDATE usuario SET ${fields.join(', ')} WHERE idusuario = ?`
 
   try {
     const [results] = await pool.query(sql, values)
-    res.status(200).json(results)
+
+    if (!results || results.affectedRows === 0) {
+      throw new Error('Hubo un error al actualizar el usuario')
+    }
+    res.status(200).json({ status: 'success', message: 'Usuario actualizado' })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ status: 'error', error: error.message })
   }
 }
 
 export const getUsuarios = async (req, res) => {
   try {
     const [results] = await pool.query('SELECT * FROM usuario')
-    res.status(200).json(results)
+
+    if (!results) {
+      throw new Error('No se encontraron usuarios')
+    }
+
+    res.status(200).json({ status: 'success', data: results })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ error: error.message })
-  }
-}
-
-export const getUsuariosFiltered = async (req, res) => {
-  const { idinf, idsup, nombre, tipo, caseSeneitive } = req.body
-  try {
-    let sql = 'SELECT * FROM usuario WHERE '
-    const values = []
-    if (idinf) {
-      sql += 'lower(idusuario) >= lower(?) AND '
-      values.push(idinf)
-    }
-
-    if (idsup) {
-      sql += 'lower(idusuario) <= lower(?) AND '
-      values.push(idsup)
-    }
-
-    if (nombre) {
-      if (caseSeneitive) sql += 'nombre LIKE BINARY CONCAT(\'%\', ?, \'%\') AND '
-      else sql += 'lower(nombre) LIKE CONCAT(\'%\', lower(?), \'%\') AND '
-      values.push(nombre)
-    }
-    if (tipo) {
-      const tipos = tipo.split(',').map(tipo => tipo.trim())
-      sql += `tipo IN (${tipos.map(() => '?').join(', ')}) AND `
-      values.push(...tipos)
-    }
-    if (values.length !== 0) {
-      sql = sql.slice(0, -4)
-    } else {
-      sql = sql.slice(0, -7)
-    }
-    sql += ' ORDER BY idusuario ASC'
-    const [results] = await pool.query(sql, values)
-    res.status(200).json(results)
-  } catch (error) {
-    console.log(error)
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ status: 'error', error: error.message })
   }
 }
 

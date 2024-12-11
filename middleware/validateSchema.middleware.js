@@ -1,3 +1,5 @@
+import { z } from 'zod'
+
 export const validateSchema = (schema) => {
   return (req, res, next) => {
     try {
@@ -5,7 +7,7 @@ export const validateSchema = (schema) => {
       next()
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const errorMessages = error.errors.map(err => ({
+        const errorMessages = error.errors.map((err) => ({
           field: err.path[0],
           message: err.message
         }))
