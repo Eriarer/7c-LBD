@@ -5,7 +5,7 @@ export const addResponsable = async (req, res) => {
   try {
     const sql =
       'INSERT INTO responsable (idresponsable, nombre, tipo) VALUES (?, ?, ?, ?)'
-    const result = await pool.query(sql, [idresponsable, nombre, tipo])
+    const [result] = await pool.query(sql, [idresponsable, nombre, tipo])
     res.status(201).json(result)
   } catch (error) {
     res.status(400).json({ error: error.message })
