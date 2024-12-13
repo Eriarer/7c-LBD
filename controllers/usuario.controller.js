@@ -6,23 +6,9 @@ export const addUsuario = async (req, res) => {
 
   try {
     let sql = 'INSERT INTO usuario'
-    let fields = []
-    let values = []
-    if (!idusuario) {
-      throw new Error('El id es requerido')
-    }
-    fields.push('idusuario')
-    values.push(idusuario)
-    if (!nombre) {
-      throw new Error('El nombre es requerido')
-    }
-    fields.push('nombre')
-    values.push(nombre)
-    if (!correo) {
-      throw new Error('correo is required')
-    }
-    fields.push('correo')
-    values.push(correo)
+    let fields = ['idusuario', 'nombre', 'correo']
+    let values = [idusuario, nombre, correo]
+
     if (apellido) {
       fields.push('apellido')
       values.push(apellido)

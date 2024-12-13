@@ -1,10 +1,20 @@
 import { pool } from '../db/db.js'
 
 export const addEquipo = async (req, res) => {
-  const { idEquipo, nombre, descripcion } = req.body
+  const { nombre, descripcion } = req.body
+  // descripcion es opcional
   try {
-    const sql = `INSERT INTO equipo (idEquipo, nombre, descripcion) VALUES ($?, $?, $?)`
-    const [result] = await pool.execute(sql, [idEquipo, nombre, descripcion])
+    let sql = 'INSERT INTO equipo'
+    let fields = ['nombre']
+    let values = [nombre]
+    if (descripcion) {
+      fields.push('descripcion')
+      values.push(descripcion)
+    }
+    sql += ` (${fields.join(', ')}) VALUES (${fields
+      .map(() => '?')
+      .join(', ')})`
+    const [result] = await pool.execute(sql, values)
     res.status(201).json(result)
   } catch (error) {
     console.log(error)
