@@ -15,20 +15,23 @@ export const addEquipo = async (req, res) => {
       .map(() => '?')
       .join(', ')})`
     const [result] = await pool.execute(sql, values)
-    res.status(201).json(result)
+    res.status(201).json({status: 'success', message: 'Equipo agregado'})
   } catch (error) {
     console.log(error)
-    res.status(500).json({ error: error.message })
+    res.status(500).json({status: 'error', message: error.message})
   }
 }
 
 export const getEquipos = async (req, res) => {
   try {
     const [result] = await pool.execute('SELECT * FROM equipo')
-    res.status(200).json(result)
+    if (result.length === 0) {
+      return res.status(404).json({status: 'error', message: 'No hay equipos'})
+    }
+    res.status(200).json({status: 'success', data: result})
   } catch (error) {
     console.log(error)
-    res.status(500).json({ error: error.message })
+    res.status(500).json({status: 'error', message: error.message})
   }
 }
 

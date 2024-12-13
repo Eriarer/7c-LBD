@@ -10,10 +10,7 @@ export const addEquipoSchema = z.object({
     .max(200, { message: 'La descripción no puede exceder 200 caracteres' })
     .optional(),
   disponible: z
-    .string() // Recibido como string desde el JSON
-    .regex(/^(true|false)$/i, { message: 'Disponible debe ser booleano' })
-    .transform((value) => (value.toLowerCase() === 'true' ? 1 : 0))
-    .optional()
+    .boolean().optional()
 })
 
 export const updateEquipoSchema = z
@@ -32,9 +29,6 @@ export const updateEquipoSchema = z
       .max(200, { message: 'La descripción no puede exceder 200 caracteres' })
       .optional(),
     disponible: z
-      .string()
-      .regex(/^(true|false)$/i, { message: 'Disponible debe ser booleano' })
-      .transform((value) => (value.toLowerCase() === 'true' ? 1 : 0))
-      .optional()
+      .boolean().optional()
   })
   .partial()

@@ -1,26 +1,31 @@
 import { pool } from '../db/db.js'
 
 export const addLaboratorio = async (req, res) => {
-    const {idLaboratorio, plantel, num_ed, aula, departamento, cupo} = req.body
+    const {plantel, num_ed, aula, departamento, cupo} = req.body
     try {
-        sql = `INSERT INTO laboratorio (idLaboratorio, plantel, num_ed, aula, departamento, cupo) VALUES (?, ?, ?, ?, ?, ?)`
-        const [result] = await pool.execute(sql, [idLaboratorio, plantel, num_ed, aula, departamento, cupo])
-        res.status(201).json(result)
+        sql = `INSERT INTO laboratorio`
+        let fields = ['plantel', 'num_ed', 'aula', 'departamento', 'cupo']
+        let values = [plantel, num_ed, aula, departamento, cupo]
+        sql += ` (${fields.join(', ')}) VALUES (${fields
+            .map(() => '?')
+            .join(', ')})`
+        const [result] = await pool.execute(sql, values)
+        res.status(201).json({status: 'success', message: 'Laboratorio agregado'})
     }
     catch (error) {
         console.log(error)
-        res.status(500).json({error: error.message})
+        res.status(500).json({status: 'error', message: error.message})
     }
 }
 
 export const getLaboratorios = async (req, res) => {
     try {
         const [result] = await pool.execute('SELECT * FROM laboratorio')
-        res.status(200).json(result)
+        res.status(200).json({status: 'success', data: result})
     }
     catch (error) {
         console.log(error)
-        res.status(500).json({error: error.message})
+        res.status(500).json({status: 'error', message: error.message})
     }
 }
 
@@ -33,7 +38,7 @@ export const getLaboratorioById = async (req, res) => {
     }
     catch (error) {
         console.log(error)
-        res.status(500).json({error: error.message})
+        res.status(500).json({status: 'error', message: error.message})
     }
 }
 
@@ -42,11 +47,11 @@ export const deleteLaboratorio = async (req, res) => {
     try {
         const sql = `DELETE FROM laboratorio WHERE idLaboratorio = ?`
         const [result] = await pool.execute(sql, [id])
-        res.status(200).json(result)
+        res.status(200).json({status: 'success', message: 'Laboratorio eliminado'})
     }
     catch (error) {
         console.log(error)
-        res.status(500).json({error: error.message})
+        res.status(500).json({status: 'error', message: error.message})
     }
 }
 
@@ -75,17 +80,17 @@ export const updateLaboratorio = async (req, res) => {
         values.push(cupo)
     }
     if (values.length === 0) {
-        return res.status(400).json({error: 'Datos insuficientes'})
+        return res.status(400).json({status: 'error', message: 'Datos insuficientes'})
     }
     sql = sql.slice(0, -1)
     sql += ` WHERE idLaboratorio = ?`
     values.push(idLaboratorio)
     try {
         const [result] = await pool.execute(sql, values)
-        res.status(200).json(result)
+        res.status(200).json({status: 'success', message: 'Laboratorio actualizado'})
     }
     catch (error) {
         console.log(error)
-        res.status(500).json({error: error.message})
+        res.status(500).json({status: 'error', message: error.message})
     }
 }

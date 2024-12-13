@@ -1,11 +1,19 @@
 import { pool } from '../db/db.js'
 
 export const addResponsable = async (req, res) => {
-  const { idresponsable, nombre, tipo } = req.body
+  const { idresponsable, nombre} = req.body
   try {
-    const sql =
-      'INSERT INTO responsable (idresponsable, nombre, tipo) VALUES (?, ?, ?, ?)'
-    const [result] = await pool.query(sql, [idresponsable, nombre, tipo])
+    const sql = 'INSERT INTO responsable'
+    const fields = ['idresponsable', 'nombre']
+    const values = [idresponsable, nombre]
+    if(tipo){
+      fields.push('tipo')
+      values.push(tipo)
+    }
+    sql += ` (${fields.join(', ')}) VALUES (${fields
+      .map(() => '?')
+      .join(', ')})`
+    const [result] = await pool.execute(sql, values)
     res.status(201).json(result)
   } catch (error) {
     res.status(400).json({ error: error.message })
