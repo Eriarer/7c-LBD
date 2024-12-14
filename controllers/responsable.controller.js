@@ -1,31 +1,35 @@
 import { pool } from '../db/db.js'
 
 export const addResponsable = async (req, res) => {
-  const { idresponsable, nombre} = req.body
+  const { idresponsable, nombre, tipo } = req.body
+  const sql = 'INSERT INTO responsable'
+  const fields = ['idresponsable', 'nombre']
+  const values = [idresponsable, nombre]
+  if (tipo) {
+    fields.push('tipo')
+    values.push(tipo)
+  }
+  sql += ` (${fields.join(', ')}) VALUES (${fields.map(() => '?').join(', ')})`
   try {
-    const sql = 'INSERT INTO responsable'
-    const fields = ['idresponsable', 'nombre']
-    const values = [idresponsable, nombre]
-    if(tipo){
-      fields.push('tipo')
-      values.push(tipo)
-    }
-    sql += ` (${fields.join(', ')}) VALUES (${fields
-      .map(() => '?')
-      .join(', ')})`
     const [result] = await pool.execute(sql, values)
-    res.status(201).json(result)
+    if (result.affectedRows === 0)
+      res
+        .status(400)
+        .json({ status: 'error', message: 'No se pudo agregar el equipo' })
+    res.status(201).json({ status: 'success', data: result })
   } catch (error) {
-    res.status(400).json({ error: error.message })
+    res.status(400).json({ status: 'error', message: error.message })
   }
 }
 
 export const getResponsables = async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM responsable')
-    res.status(200).json(result)
+    if (result.length === 0)
+      res.status(404).json({ status: 'error', message: 'No hay responsables' })
+    res.status(200).json({ status: 'success', data: result })
   } catch (error) {
-    res.status(400).json({ error: error.message })
+    res.status(400).json({ status: 'error', message: error.message })
   }
 }
 
@@ -34,15 +38,20 @@ export const getResponsableById = async (req, res) => {
   try {
     const sql = 'SELECT * FROM responsable WHERE idresponsable = ?'
     const [results] = await pool.query(sql, [id])
-    res.status(200).json(results)
+    if (result.length === 0)
+      res
+        .status(404)
+        .json({ status: 'error', message: 'Responsable no encontrado' })
+    res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ status: 'error', message: error.message })
   }
 }
 
 export const updateResponsable = async (req, res) => {
-  const { idresponsable, newIdresponsable, nombre, tipo } = req.body
+  const idresponsable = req.params
+  const { newIdresponsable, nombre, tipo } = req.body
   let sql = 'UPDATE responsable SET '
   const values = []
   if (newIdresponsable) {
@@ -65,21 +74,26 @@ export const updateResponsable = async (req, res) => {
   values.push(idresponsable)
   try {
     const [results] = await pool.query(sql, values)
-    res.status(200).json(results)
+    res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ status: 'error', message: error.message })
   }
 }
 
 export const deleteResponsable = async (req, res) => {
   const { idresponsable } = req.params
   try {
-    const sql = 'DELETE FROM responsable WHERE idresponsable = ?'
+    const sql = 'UPDATE responsable SET activo = 0 WHERE idresponsable = ?'
     const [results] = await pool.query(sql, [idresponsable])
-    res.status(200).json(results)
+    if (result.affectedRows === 0)
+      res.status(400).json({
+        status: 'error',
+        message: 'No se pudo eliminar el responsable'
+      })
+    res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ status: 'error', message: error.message })
   }
 }

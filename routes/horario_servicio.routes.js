@@ -1,10 +1,11 @@
 import express from 'express'
 import { validateSchema } from '../middleware/validateSchema.middleware.js'
 import {
-    addHorarioServicio,
-    getHorariosServicios,
-    getHorarioServicioById,
-    deleteHorarioServicio
+  addHorarioServicio,
+  getHorariosServicios,
+  getHorarioServicioById,
+  deleteHorarioServicio,
+  updateHorarioServicio
 } from '../controllers/horario_servicio.controller.js'
 
 const router = express.Router()
@@ -12,8 +13,10 @@ const router = express.Router()
 router.post('/create', validateSchema, addHorarioServicio)
 
 router.get('/get', getHorariosServicios)
-router.get('/get/:idlaboratorio/:hora_inicio/:hora_cierre/:dias', getHorarioServicioById)
+router.get('/get/:id', getHorarioServicioById)
 
-router.delete('/delete/:idlaboratorio/:hora_inicio/:hora_cierre/:dias', deleteHorarioServicio)
+router.delete('/delete/:id', deleteHorarioServicio)
+
+router.put('/update/:id', validateSchema, updateHorarioServicio)
 
 export default router

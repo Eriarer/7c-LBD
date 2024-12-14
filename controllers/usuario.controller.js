@@ -4,41 +4,40 @@ export const addUsuario = async (req, res) => {
   const { idusuario, nombre, apellido, carrera, correo, tipo, activo } =
     req.body
 
+  let sql = 'INSERT INTO usuario'
+  let fields = ['idusuario', 'nombre', 'correo']
+  let values = [idusuario, nombre, correo]
+
+  if (apellido) {
+    fields.push('apellido')
+    values.push(apellido)
+  }
+  if (carrera) {
+    fields.push('carrera')
+    values.push(carrera)
+  }
+  if (tipo) {
+    fields.push('tipo')
+    values.push(tipo)
+  }
+  if (activo) {
+    fields.push('activo')
+    values.push(activo)
+  }
+  sql += ` (${fields.join(', ')}) VALUES (${fields.map(() => '?').join(', ')})`
   try {
-    let sql = 'INSERT INTO usuario'
-    let fields = ['idusuario', 'nombre', 'correo']
-    let values = [idusuario, nombre, correo]
-
-    if (apellido) {
-      fields.push('apellido')
-      values.push(apellido)
-    }
-    if (carrera) {
-      fields.push('carrera')
-      values.push(carrera)
-    }
-    if (tipo) {
-      fields.push('tipo')
-      values.push(tipo)
-    }
-    if (activo) {
-      fields.push('activo')
-      values.push(activo)
-    }
-    sql += ` (${fields.join(', ')}) VALUES (${fields
-      .map(() => '?')
-      .join(', ')})`
-
     const [result] = await pool.query(sql, values)
-
-    if (!result || result.affectedRows === 0) {
-      throw new Error('Hubo un error al crear el usuario')
-    }
+    if (!result || result.affectedRows === 0)
+      res
+        .status(400)
+        .json({ status: 'error', message: 'No se pudo agregar el usuario' })
 
     res.status(201).json({ status: 'success', message: 'Usuario creado' })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', error: error.message })
+    res
+      .status(500)
+      .json({ status: 'error', status: 'error', message: error.message })
   }
 }
 
@@ -54,14 +53,15 @@ export const deleteUsuario = async (req, res) => {
     res.status(200).json({ status: 'success', message: 'Usuario eliminado' })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', error: error.message })
+    res
+      .status(500)
+      .json({ status: 'error', status: 'error', message: error.message })
   }
 }
 
 export const updateUsuario = async (req, res) => {
-  const { id, newId, nombre, apellido, carrera, correo, tipo, activo } =
-    req.body
-
+  const { id } = req.params
+  const { newId, nombre, apellido, carrera, correo, tipo, activo } = req.body
   const values = []
   const fields = []
   if (newId) {
@@ -111,22 +111,23 @@ export const updateUsuario = async (req, res) => {
     res.status(200).json({ status: 'success', message: 'Usuario actualizado' })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', error: error.message })
+    res
+      .status(500)
+      .json({ status: 'error', status: 'error', message: error.message })
   }
 }
 
 export const getUsuarios = async (req, res) => {
   try {
     const [results] = await pool.query('SELECT * FROM usuario')
-
-    if (!results) {
-      throw new Error('No se encontraron usuarios')
-    }
-
+    if (result.length === 0)
+      res.status(404).json({ status: 'error', message: 'No hay usuarios' })
     res.status(200).json({ status: 'success', data: results })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', error: error.message })
+    res
+      .status(500)
+      .json({ status: 'error', status: 'error', message: error.message })
   }
 }
 
@@ -135,12 +136,13 @@ export const getUsuarioById = async (req, res) => {
   try {
     const sql = 'SELECT * FROM usuario WHERE idusuario = ?'
     const [results] = await pool.query(sql, [id])
-    if (!results || results.length === 0) {
-      throw new Error('No se encontró el usuario')
-    }
+    if (result.length === 0)
+      res
+        .status(400)
+        .json({ status: 'error', message: 'Usuario no encontrado' })
     res.status(200).json({ status: 'success', data: results[0] })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ status: 'error', message: error.message })
   }
 }

@@ -1,4 +1,5 @@
 import express from 'express'
+import { addEquipoSchema, updateEquipoSchema } from '../schema/equipo.schema.js'
 import { validateSchema } from '../middleware/validateSchema.middleware.js'
 import {
   addEquipo,
@@ -10,13 +11,13 @@ import {
 
 const router = express.Router()
 
-router.post('/create', validateSchema, addEquipo)
+router.post('/create', validateSchema(addEquipoSchema), addEquipo)
 
 router.get('/get', getEquipo)
 router.get('/get/:id', getEquipoById)
 
 router.delete('/delete/:id', deleteEquipo)
 
-router.put('/update/:id', validateSchema, updateEquipo)
+router.put('/update/:id', validateSchema(updateEquipoSchema), updateEquipo)
 
 export default router

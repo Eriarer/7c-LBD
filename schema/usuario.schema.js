@@ -1,13 +1,9 @@
 import { z } from 'zod'
 
 export const addUsuarioSchema = z.object({
-  idusuario: z
-    .string({
-      message: 'El Id es requerido'
-    })
-    .regex(/^[0-9]{1,10}$/, {
-      message: 'Id debe ser un número de 1-10 dígitos'
-    }),
+  idusuario: z.number({
+    message: 'El Id es requerido'
+  }),
   nombre: z
     .string({ message: 'Nombre es requerido' })
     .min(4, { message: 'Nombre debe tener al menos 4 caracteres' })
@@ -29,16 +25,12 @@ export const addUsuarioSchema = z.object({
     .string({ message: 'Tipo es requerido' })
     .length(1, { message: 'Tipo debe ser un caracter' })
     .regex(/^[MAE]$/, { message: 'Tipo debe ser M, A o E' }),
-  activo: z
-    .boolean() 
-    .optional()
+  activo: z.boolean().optional()
 })
 
 export const updateUsuarioSchema = z
   .object({
-    id: z.string().regex(/^[0-9]{1,10}$/, {
-      message: 'Id debe ser un número de 1-10 dígitos'
-    }),
+    id: z.number().optional(),
     newId: z
       .string()
       .regex(/^[0-9]{1,10}$/, {
