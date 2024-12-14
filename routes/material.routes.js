@@ -9,11 +9,4 @@ import {
 
 const router = express.Router()
 
-router.post('/create', addMaterial)
-
-router.get('/get', getMaterial)
-router.get('/get/:idprestamo/:idlaboratorio/:idunidad', getMaterialById)
-
-router.delete('/delete/:idprestamo/:idlaboratorio/:idunidad', deleteMaterial)
-
 export default router

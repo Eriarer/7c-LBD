@@ -69,6 +69,23 @@ export const getPrestamoById = async (req, res) => {
   }
 }
 
+export const getPrestamoByIdUsuario = async (req, res) => {
+  const { idusuario } = req.params
+  try {
+    const sql = 'SELECT * FROM prestamo WHERE idusuario = ?'
+    const [result] = await pool.execute(sql, [idusuario])
+    if (result.length === 0) {
+      res
+        .status(404)
+        .json({ status: 'error', message: 'Prestamos no encontrado' })
+    }
+    res.status(200).json({ status: 'success', data: result })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ status: 'error', message: error.message })
+  }
+}
+
 export const deletePrestamo = async (req, res) => {
   const { id, estado } = req.params
   const estados = ['C', 'D', 'F']

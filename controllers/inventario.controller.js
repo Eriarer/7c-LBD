@@ -68,3 +68,48 @@ export const deleteInventario = async (req, res) => {
     res.status(500).json({ status: 'error', message: error.message })
   }
 }
+
+export const updateInventario = async (req, res) => {
+  const { idlab, iduni } = req.params
+  const { idlaboratorio, idunidad, cantidad } = req.body
+  const fields = []
+  const values = []
+  if (idlaboratorio) {
+    fields.push('idlaboratorio')
+    values.push(idlaboratorio)
+  }
+  if (idunidad) {
+    fields.push('idunidad')
+    values.push(idunidad)
+  }
+  if (cantidad) {
+    fields.push('cantidad')
+    values.push(cantidad)
+  }
+  if (fields.length === 0) {
+    return res
+      .status(400)
+      .json({ status: 'error', message: 'No hay campos para actualizar' })
+  }
+  values.push(idlab, iduni)
+  const sql = `UPDATE inventario SET ${fields
+    .map((field) => `${field} = ?`)
+    .join(', ')} WHERE idlaboratorio = ? AND idunidad = ?`
+  try {
+    const [result] = await pool.execute(sql, values)
+    if (result.affectedRows === 0) {
+      return res
+        .status(400)
+        .json({
+          status: 'error',
+          message: 'No se pudo actualizar el inventario'
+        })
+    }
+    res
+      .status(200)
+      .json({ status: 'success', message: 'Inventario actualizado' })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ status: 'error', message: error.message })
+  }
+}

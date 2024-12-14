@@ -4,6 +4,7 @@ import {
   addPrestamo,
   getPrestamos,
   getPrestamoById,
+  getPrestamoByIdUsuario,
   deletePrestamo,
   updatePrestamo
 } from '../controllers/prestamo.controller.js'
@@ -14,6 +15,7 @@ router.post('/create', addPrestamo)
 
 router.get('/get', getPrestamos)
 router.get('/get/:id', getPrestamoById)
+router.get('/get/usuario/:idusuario', getPrestamoByIdUsuario)
 
 router.delete('/delete/:id/:estado', deletePrestamo)
 
