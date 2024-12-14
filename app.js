@@ -33,7 +33,6 @@ app.use('/usuario', usuarioRoutes)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 app.get('/', (req, res) => {
   res.status(404).json({ status: 'error', message: 'Ruta no encontrada' })
-  res.redirect('/api-docs')
 })
 
 export default app

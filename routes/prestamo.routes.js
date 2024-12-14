@@ -1,6 +1,10 @@
 import express from 'express'
 import { validateSchema } from '../middleware/validateSchema.middleware.js'
 import {
+  addPrestamoSchema,
+  updatePrestamoSchema
+} from '../schema/prestamo.schema.js'
+import {
   addPrestamo,
   getPrestamos,
   getPrestamoById,
@@ -11,7 +15,7 @@ import {
 
 const router = express.Router()
 
-router.post('/create', addPrestamo)
+router.post('/create', validateSchema(addPrestamoSchema), addPrestamo)
 
 router.get('/get', getPrestamos)
 router.get('/get/prestamo/:id', getPrestamoById)
@@ -19,6 +23,6 @@ router.get('/get/usuario/:idusuario', getPrestamoByIdUsuario)
 
 router.delete('/delete/:id/:estado', deletePrestamo)
 
-router.put('/update/:id', updatePrestamo)
+router.put('/update/:id', validateSchema(updatePrestamoSchema), updatePrestamo)
 
 export default router

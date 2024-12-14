@@ -6,10 +6,11 @@ import {
   getMaterialById,
   deleteMaterial
 } from '../controllers/material.controller.js'
+import { addMaterialSchema } from '../schema/material.schema.js'
 
 const router = express.Router()
 
-router.post('/', validateSchema('addMaterial'), addMateriales)
+router.post('/', validateSchema(addMaterialSchema), addMateriales)
 
 router.get('/', getMateriales)
 router.get('/:id', getMaterialById)
