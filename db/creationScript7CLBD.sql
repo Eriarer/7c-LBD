@@ -232,7 +232,7 @@ CREATE TABLE IF NOT EXISTS `lab_managment`.`vista_prestamos_detallados` (
 
 USE `lab_managment`;
 
-DROP procedure IF EXISTS `lab_managment`.`actualizar_horario`;
+DROP PROCEDURE IF EXISTS `lab_managment`.`actualizar_horario`;
 
 DELIMITER $$
 
@@ -281,7 +281,7 @@ DELIMITER;
 
 USE `lab_managment`;
 
-DROP function IF EXISTS `lab_managment`.`fun_prestamo_finalizados`;
+DROP FUNCTION IF EXISTS `lab_managment`.`fun_prestamo_finalizados`;
 
 DELIMITER $$
 
@@ -311,7 +311,7 @@ DELIMITER;
 
 USE `lab_managment`;
 
-DROP function IF EXISTS `lab_managment`.`fun_prestamos_por_usuario`;
+DROP FUNCTION IF EXISTS `lab_managment`.`fun_prestamos_por_usuario`;
 
 DELIMITER $$
 
@@ -373,7 +373,7 @@ CREATE
 OR
 REPLACE
     ALGORITHM = UNDEFINED DEFINER = `glem` @`%` SQL SECURITY DEFINER VIEW `lab_managment`.`vista_laboratorio_detalle` AS
-select
+SELECT
     `l`.`idlaboratorio` AS `idlaboratorio`,
     `l`.`plantel` AS `plantel`,
     `l`.`num_ed` AS `num_ed`,
@@ -385,38 +385,38 @@ select
     `e`.`descripcion` AS `equipo_descripcion`,
     `i`.`cantidad` AS `cantidad_inventario`,
     group_concat(
-        distinct `r`.`nombre` separator ','
+        DISTINCT `r`.`nombre` SEPARATOR ','
     ) AS `responsables`
-from (
+FROM (
         (
             (
                 (
                     `lab_managment`.`laboratorio` `l`
-                    left join `lab_managment`.`inventario` `i` on (
+                    LEFT JOIN `lab_managment`.`inventario` `i` ON (
                         (
                             `l`.`idlaboratorio` = `i`.`idlaboratorio`
                         )
                     )
                 )
-                left join `lab_managment`.`equipo` `e` on (
+                LEFT JOIN `lab_managment`.`equipo` `e` ON (
                     (
                         `i`.`idunidad` = `e`.`idequipo`
                     )
                 )
             )
-            left join `lab_managment`.`lab_res` `lr` on (
+            LEFT JOIN `lab_managment`.`lab_res` `lr` ON (
                 (
                     `l`.`idlaboratorio` = `lr`.`idlaboratorio`
                 )
             )
         )
-        left join `lab_managment`.`responsable` `r` on (
+        LEFT JOIN `lab_managment`.`responsable` `r` ON (
             (
                 `lr`.`idresponsable` = `r`.`idresponsable`
             )
         )
     )
-group by
+GROUP BY
     `l`.`idlaboratorio`,
     `e`.`idequipo`;
 
@@ -433,7 +433,7 @@ CREATE
 OR
 REPLACE
     ALGORITHM = UNDEFINED DEFINER = `glem` @`%` SQL SECURITY DEFINER VIEW `lab_managment`.`vista_prestamos_detallados` AS
-select
+SELECT
     `p`.`idprestamo` AS `idprestamo`,
     `p`.`fecha` AS `fecha`,
     `p`.`observaciones` AS `observaciones`,
@@ -448,30 +448,30 @@ select
     `e`.`idequipo` AS `idequipo`,
     `e`.`nombre` AS `material_nombre`,
     `e`.`descripcion` AS `material_descripcion`
-from (
+FROM (
         (
             (
                 (
                     `lab_managment`.`prestamo` `p`
-                    join `lab_managment`.`laboratorio` `l` on (
+                    JOIN `lab_managment`.`laboratorio` `l` ON (
                         (
                             `p`.`idlaboratorio` = `l`.`idlaboratorio`
                         )
                     )
                 )
-                join `lab_managment`.`usuario` `u` on (
+                JOIN `lab_managment`.`usuario` `u` ON (
                     (
                         `p`.`idusuario` = `u`.`idusuario`
                     )
                 )
             )
-            join `lab_managment`.`material` `m` on (
+            JOIN `lab_managment`.`material` `m` ON (
                 (
                     `p`.`idprestamo` = `m`.`idprestamo`
                 )
             )
         )
-        join `lab_managment`.`equipo` `e` on (
+        JOIN `lab_managment`.`equipo` `e` ON (
             (
                 `m`.`idunidad` = `e`.`idequipo`
             )
@@ -499,47 +499,6 @@ BEGIN
         SET MESSAGE_TEXT = 'Cannot create a prestamo with a date before today';
     END IF;
 END$$
-
-DELIMITER;
-
-DROP TRIGGER IF EXISTS `lab_managment`.`material_before_insert` $$
-
-DELIMITER $$
-
--- Trigger BEFORE INSERT
-CREATE TRIGGER material_before_insert 
-BEFORE INSERT ON material
-FOR EACH ROW 
-BEGIN
-    -- Llamar al procedimiento para validar la inserción
-    CALL material_before_change(
-        NEW.idprestamo, 
-        NEW.idlaboratorio, 
-        NEW.idunidad, 
-        NEW.cantidad
-    );
-END $$
-
-DELIMITER;
-
-DROP TRIGGER IF EXISTS `lab_managment`.`material_before_update`;
-
-DELIMITER $$
-
--- Trigger BEFORE UPDATE
-CREATE TRIGGER DELIMITER;
-
-BEFORE
-UPDATE ON material FOR EACH ROW BEGIN
--- Llamar al procedimiento para validar la actualización
-CALL material_before_change (
-    NEW.idprestamo,
-    NEW.idlaboratorio,
-    NEW.idunidad,
-    NEW.cantidad
-);
-
-END $$
 
 DELIMITER;
 

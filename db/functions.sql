@@ -62,3 +62,68 @@ BEGIN
 
     RETURN IFNULL(totalFinalizados, 0);
 END$$
+
+DELIMITER;
+-- Funcion para validacion de presatmos
+
+DELIMITER $$
+
+DROP FUNCTION IF EXISTS `validar_material_prestamo` $$
+
+CREATE FUNCTION `validar_material_prestamo` (
+    p_idprestamo INT, 
+    p_idlaboratorio INT, 
+    p_idunidad INT, 
+    p_cantidad INT
+)
+RETURNS BOOLEAN
+DETERMINISTIC
+BEGIN
+    DECLARE v_current_estado ENUM('P','C','A','D','F');
+    DECLARE v_total_cantidad_prestada INT DEFAULT 0;
+    DECLARE v_inventario_cantidad INT DEFAULT 0;
+    DECLARE v_prestamo_hora_inicio TIME;
+    DECLARE v_prestamo_duracion INT;
+    DECLARE v_cantidad_disponible INT DEFAULT 0;
+
+    -- Obtener el estado y detalles del préstamo
+    SELECT estado, horaInicio, duracion 
+    INTO v_current_estado, v_prestamo_hora_inicio, v_prestamo_duracion
+    FROM prestamo 
+    WHERE idprestamo = p_idprestamo;
+
+    -- Validar estado del préstamo
+    IF v_current_estado NOT IN ('P', 'A') THEN
+        RETURN FALSE;
+    END IF;
+
+    -- Obtener la cantidad en inventario
+    SELECT cantidad INTO v_inventario_cantidad
+    FROM inventario 
+    WHERE idlaboratorio = p_idlaboratorio 
+      AND idunidad = p_idunidad;
+
+    -- Calcular cantidad total prestada en intervalos conflictivos
+    SELECT COALESCE(SUM(m.cantidad), 0) INTO v_total_cantidad_prestada
+    FROM material m
+    JOIN prestamo p ON m.idprestamo = p.idprestamo
+    JOIN prestamo p_actual ON p_actual.idprestamo = p_idprestamo
+    WHERE m.idlaboratorio = p_idlaboratorio 
+      AND m.idunidad = p_idunidad
+      AND p.estado = 'A'
+      AND (
+          (p.horaInicio <= p_actual.horaInicio 
+           AND ADDTIME(p.horaInicio, SEC_TO_TIME(p.duracion * 3600)) > p_actual.horaInicio)
+          OR 
+          (p.horaInicio >= p_actual.horaInicio 
+           AND p.horaInicio < ADDTIME(p_actual.horaInicio, SEC_TO_TIME(p_actual.duracion * 3600)))
+      );
+
+    -- Calcular la cantidad disponible
+    SET v_cantidad_disponible = v_inventario_cantidad - v_total_cantidad_prestada; 
+
+    -- Verificar si la cantidad solicitada supera la cantidad disponible
+    RETURN p_cantidad <= v_cantidad_disponible;
+END$$
+
+DELIMITER;
