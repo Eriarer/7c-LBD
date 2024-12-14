@@ -72,7 +72,8 @@ export const getPrestamoById = async (req, res) => {
 export const getPrestamoByIdUsuario = async (req, res) => {
   const { idusuario } = req.params
   try {
-    const sql = 'SELECT * FROM prestamo WHERE idusuario = ?'
+    const sql =
+      'SELECT pr.*, lab.num_ed, lab.aula FROM prestamo pr JOIN laboratorio lab ON pr.idlaboratorio = lab.idlaboratorio WHERE idusuario = ?'
     const [result] = await pool.execute(sql, [idusuario])
     if (result.length === 0) {
       res
