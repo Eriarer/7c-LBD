@@ -502,6 +502,47 @@ END$$
 
 DELIMITER;
 
+DROP TRIGGER IF EXISTS `lab_managment`.`material_before_insert` $$
+
+DELIMITER $$
+
+-- Trigger BEFORE INSERT
+CREATE TRIGGER material_before_insert 
+BEFORE INSERT ON material
+FOR EACH ROW 
+BEGIN
+    -- Llamar al procedimiento para validar la inserción
+    CALL material_before_change(
+        NEW.idprestamo, 
+        NEW.idlaboratorio, 
+        NEW.idunidad, 
+        NEW.cantidad
+    );
+END $$
+
+DELIMITER;
+
+DROP TRIGGER IF EXISTS `lab_managment`.`material_before_update`;
+
+DELIMITER $$
+
+-- Trigger BEFORE UPDATE
+CREATE TRIGGER DELIMITER;
+
+BEFORE
+UPDATE ON material FOR EACH ROW BEGIN
+-- Llamar al procedimiento para validar la actualización
+CALL material_before_change (
+    NEW.idprestamo,
+    NEW.idlaboratorio,
+    NEW.idunidad,
+    NEW.cantidad
+);
+
+END $$
+
+DELIMITER;
+
 SET SQL_MODE = @OLD_SQL_MODE;
 
 SET FOREIGN_KEY_CHECKS = @OLD_FOREIGN_KEY_CHECKS;
