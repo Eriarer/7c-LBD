@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
 export const addResponsableSchema = z.object({
   idresponsable: z
@@ -12,10 +12,8 @@ export const addResponsableSchema = z.object({
   tipo: z
     .string({ message: 'El tipo es requerido' })
     .regex(/^[EPA]$/, { message: 'El tipo debe ser "E", "P" o "A"' }),
-  activo: z
-    .boolean()
-    .default(true)
-});
+  activo: z.boolean().default(true)
+})
 
 export const updateResponsableSchema = z
   .object({
@@ -35,4 +33,4 @@ export const updateResponsableSchema = z
       .optional(),
     activo: z.boolean().optional()
   })
-  .partial();
+  .partial()

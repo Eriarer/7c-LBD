@@ -5,8 +5,8 @@ export const addUsuario = async (req, res) => {
     req.body
 
   let sql = 'INSERT INTO usuario'
-  let fields = ['idusuario', 'nombre', 'correo']
-  let values = [idusuario, nombre, correo]
+  const fields = ['idusuario', 'nombre', 'correo']
+  const values = [idusuario, nombre, correo]
 
   if (apellido) {
     fields.push('apellido')
@@ -27,10 +27,11 @@ export const addUsuario = async (req, res) => {
   sql += ` (${fields.join(', ')}) VALUES (${fields.map(() => '?').join(', ')})`
   try {
     const [result] = await pool.query(sql, values)
-    if (!result || result.affectedRows === 0)
+    if (!result || result.affectedRows === 0) {
       res
         .status(400)
         .json({ status: 'error', message: 'No se pudo agregar el usuario' })
+    }
 
     res.status(201).json({ status: 'success', message: 'Usuario creado' })
   } catch (error) {
@@ -114,8 +115,9 @@ export const updateUsuario = async (req, res) => {
 export const getUsuarios = async (req, res) => {
   try {
     const [results] = await pool.query('SELECT * FROM usuario')
-    if (results.length === 0)
+    if (results.length === 0) {
       res.status(404).json({ status: 'error', message: 'No hay usuarios' })
+    }
     res.status(200).json({ status: 'success', data: results })
   } catch (error) {
     console.log(error)
@@ -128,11 +130,12 @@ export const getUsuarioById = async (req, res) => {
   try {
     const sql = 'SELECT * FROM usuario WHERE idusuario = ?'
     const [results] = await pool.query(sql, [id])
-    if (result.length === 0)
+    if (results.length === 0) {
       res
         .status(400)
         .json({ status: 'error', message: 'Usuario no encontrado' })
-    res.status(200).json({ status: 'success', data: results[0] })
+    }
+    res.status(200).json({ status: 'success', data: results })
   } catch (error) {
     console.log(error)
     res.status(500).json({ status: 'error', message: error.message })

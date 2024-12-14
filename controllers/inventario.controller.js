@@ -3,15 +3,16 @@ import { pool } from '../db/db.js'
 export const addInventario = async (req, res) => {
   const { idlaboratorio, idunidad, cantidad } = req.body
   let sql = 'INSERT INTO inventario'
-  let fields = ['idlaboratorio', 'idunidad', 'cantidad']
-  let values = [idlaboratorio, idunidad, cantidad]
+  const fields = ['idlaboratorio', 'idunidad', 'cantidad']
+  const values = [idlaboratorio, idunidad, cantidad]
   sql += ` (${fields.join(', ')}) VALUES (${fields.map(() => '?').join(', ')})`
   try {
     const [result] = await pool.execute(sql, values)
-    if (result.affectedRows === 0)
+    if (result.affectedRows === 0) {
       res
         .status(400)
         .json({ status: 'error', message: 'No se pudo crear el inventario' })
+    }
     res.status(201).json({ status: 'success', message: 'Inventario agregado' })
   } catch (error) {
     console.log(error)
@@ -37,10 +38,12 @@ export const getInventarios = async (req, res) => {
 export const getInventarioById = async (req, res) => {
   const { idlaboratorio, idunidad } = req.params
   try {
-    const sql = `SELECT * FROM inventario WHERE idlaboratorio = ? AND idunidad = ?`
+    const sql =
+      'SELECT * FROM inventario WHERE idlaboratorio = ? AND idunidad = ?'
     const [result] = await pool.execute(sql, [idlaboratorio, idunidad])
-    if (result.length === 0)
+    if (result.length === 0) {
       res.status(404).json({ status: 'error', message: 'No hay inventarios' })
+    }
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
@@ -51,12 +54,14 @@ export const getInventarioById = async (req, res) => {
 export const deleteInventario = async (req, res) => {
   const { idlaboratorio, idunidad } = req.params
   try {
-    const sql = `DELETE FROM inventario WHERE idlaboratorio = ? AND idunidad = ?`
+    const sql =
+      'DELETE FROM inventario WHERE idlaboratorio = ? AND idunidad = ?'
     const [result] = await pool.execute(sql, [idlaboratorio, idunidad])
-    if (result.affectedRows === 0)
+    if (result.affectedRows === 0) {
       res
         .status(400)
         .json({ status: 'error', message: 'No se pudo eliminar el inventario' })
+    }
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)

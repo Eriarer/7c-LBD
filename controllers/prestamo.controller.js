@@ -11,7 +11,7 @@ export const addPrestamo = async (req, res) => {
     estado
   } = req.body
   let sql = 'INSERT INTO prestamo'
-  let fields = [
+  const fields = [
     'idlaboratorio',
     'idusuario',
     'fecha',
@@ -19,7 +19,7 @@ export const addPrestamo = async (req, res) => {
     'duracion',
     'estado'
   ]
-  let values = [idlaboratorio, idusuario, fecha, horaInicio, duracion, estado]
+  const values = [idlaboratorio, idusuario, fecha, horaInicio, duracion, estado]
   if (observaciones) {
     fields.push('observaciones')
     values.push(observaciones)
@@ -27,10 +27,11 @@ export const addPrestamo = async (req, res) => {
   sql += ` (${fields.join(', ')}) VALUES (${fields.map(() => '?').join(', ')})`
   try {
     const [result] = await pool.execute(sql, values)
-    if (result.affectedRows === 0)
+    if (result.affectedRows === 0) {
       res
         .status(400)
         .json({ status: 'error', message: 'No se pudo agregar el prestamo' })
+    }
     res.status(201).json({ status: 'success', message: 'Préstamo agregado' })
   } catch (error) {
     console.log(error)
@@ -41,8 +42,9 @@ export const addPrestamo = async (req, res) => {
 export const getPrestamos = async (req, res) => {
   try {
     const [result] = await pool.execute('SELECT * FROM prestamo')
-    if (result.length === 0)
+    if (result.length === 0) {
       res.status(404).json({ status: 'error', message: 'No hay prestamos' })
+    }
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
@@ -53,12 +55,13 @@ export const getPrestamos = async (req, res) => {
 export const getPrestamoById = async (req, res) => {
   const { id } = req.params
   try {
-    const sql = `SELECT * FROM prestamo WHERE idprestamo = ?`
+    const sql = 'SELECT * FROM prestamo WHERE idprestamo = ?'
     const [result] = await pool.execute(sql, [id])
-    if (result.length === 0)
+    if (result.length === 0) {
       res
         .status(404)
         .json({ status: 'error', message: 'Prestamos no encontrado' })
+    }
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
@@ -69,15 +72,17 @@ export const getPrestamoById = async (req, res) => {
 export const deletePrestamo = async (req, res) => {
   const { id, estado } = req.params
   const estados = ['C', 'D', 'F']
-  if (!estados.includes(estado))
+  if (!estados.includes(estado)) {
     res.status(400).json({ status: 'error', message: 'Estado inválido' })
+  }
   try {
-    const sql = `UPDATE prestamo SET estado = ? WHERE idprestamo = ?`
+    const sql = 'UPDATE prestamo SET estado = ? WHERE idprestamo = ?'
     const [result] = await pool.execute(sql, [estado, id])
-    if (result.affectedRows === 0)
+    if (result.affectedRows === 0) {
       res
         .status(400)
         .json({ status: 'error', message: 'No se pudo eliminar el equipo' })
+    }
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
@@ -96,8 +101,8 @@ export const updatePrestamo = async (req, res) => {
     observaciones,
     estado
   } = req.body
-  let fields = []
-  let values = []
+  const fields = []
+  const values = []
   if (idlaboratorio) {
     fields.push('idlaboratorio = ?')
     values.push(idlaboratorio)
@@ -127,13 +132,14 @@ export const updatePrestamo = async (req, res) => {
     values.push(estado)
   }
   values.push(id)
-  let sql = `UPDATE prestamo SET ${fields.join(', ')} WHERE idprestamo = ?`
+  const sql = `UPDATE prestamo SET ${fields.join(', ')} WHERE idprestamo = ?`
   try {
     const [result] = await pool.execute(sql, values)
-    if (result.affectedRows === 0)
+    if (result.affectedRows === 0) {
       res
         .status(400)
         .json({ status: 'error', message: 'No se pudo actualizar el prestamo' })
+    }
     res.status(200).json({ status: 'success', message: 'Prestamo actualizado' })
   } catch (error) {
     console.log(error)

@@ -2,9 +2,9 @@ import { pool } from '../db/db.js'
 
 export const addLaboratorio = async (req, res) => {
   const { plantel, num_ed, aula, departamento, cupo } = req.body
-  sql = `INSERT INTO laboratorio`
-  let fields = ['plantel', 'num_ed', 'aula', 'departamento', 'cupo']
-  let values = [plantel, num_ed, aula, departamento, cupo]
+  let sql = 'INSERT INTO laboratorio'
+  const fields = ['plantel', 'num_ed', 'aula', 'departamento', 'cupo']
+  const values = [plantel, num_ed, aula, departamento, cupo]
   sql += ` (${fields.join(', ')}) VALUES (${fields.map(() => '?').join(', ')})`
   try {
     const [result] = await pool.execute(sql, values)
@@ -36,9 +36,9 @@ export const getLaboratorios = async (req, res) => {
 }
 
 export const getLaboratorioById = async (req, res) => {
-  const { idLaboratorio } = req.params
+  const { id } = req.params
   try {
-    const sql = `SELECT * FROM laboratorio WHERE idLaboratorio = ?`
+    const sql = 'SELECT * FROM laboratorio WHERE idLaboratorio = ?'
     const [result] = await pool.execute(sql, [id])
     if (result.length === 0) {
       return res
@@ -53,9 +53,9 @@ export const getLaboratorioById = async (req, res) => {
 }
 
 export const deleteLaboratorio = async (req, res) => {
-  const { idLaboratorio } = req.params
+  const { id } = req.params
   try {
-    const sql = `DELETE FROM laboratorio WHERE idLaboratorio = ?`
+    const sql = 'DELETE FROM laboratorio WHERE idLaboratorio = ?'
     const [result] = await pool.execute(sql, [id])
     if (result.affectedRows === 0) {
       return res
@@ -72,28 +72,29 @@ export const deleteLaboratorio = async (req, res) => {
 }
 
 export const updateLaboratorio = async (req, res) => {
-  const { idLaboratorio } = req.params
+  const { id } = req.params
   const { plantel, num_ed, aula, departamento, cupo } = req.body
-  let sql = `UPDATE laboratorio SET `
+  let sql = 'UPDATE laboratorio SET '
   const values = []
+  const fields = []
   if (plantel) {
-    sql += ` plantel = ?,`
+    fields.push('plantel')
     values.push(plantel)
   }
   if (num_ed) {
-    sql += ` num_ed = ?,`
+    fields.push('num_ed')
     values.push(num_ed)
   }
   if (aula) {
-    sql += ` aula = ?,`
+    fields.push('aula')
     values.push(aula)
   }
   if (departamento) {
-    sql += ` departamento = ?,`
+    fields.push('departamento')
     values.push(departamento)
   }
   if (cupo) {
-    sql += ` cupo = ?,`
+    fields.push('cupo')
     values.push(cupo)
   }
   if (values.length === 0) {
@@ -101,9 +102,10 @@ export const updateLaboratorio = async (req, res) => {
       .status(400)
       .json({ status: 'error', message: 'Datos insuficientes' })
   }
-  sql = sql.slice(0, -1)
-  sql += ` WHERE idLaboratorio = ?`
-  values.push(idLaboratorio)
+  sql +=
+    fields.map((field) => `${field} = ?`).join(', ') +
+    ' WHERE idLaboratorio = ?'
+  values.push(id)
   try {
     const [result] = await pool.execute(sql, values)
     if (result.affectedRows === 0) {

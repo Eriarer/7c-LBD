@@ -10,14 +10,14 @@ export const addHorarioProfesor = async (req, res) => {
     descripcion
   } = req.body
   let sql = 'INSERT INTO horario_profesor'
-  let fields = [
+  const fields = [
     'idlaboratorio',
     'idusuario',
     'hora_inicio',
     'hora_cierre',
     'dias'
   ]
-  let values = [idlaboratorio, idusuario, hora_inicio, hora_cierre, dias]
+  const values = [idlaboratorio, idusuario, hora_inicio, hora_cierre, dias]
   if (descripcion) {
     fields.push('descripcion')
     values.push(descripcion)
@@ -26,11 +26,12 @@ export const addHorarioProfesor = async (req, res) => {
 
   try {
     const [result] = await pool.execute(sql, values)
-    if (result.affectedRows === 0)
+    if (result.affectedRows === 0) {
       res.status(400).json({
         status: 'error',
         message: 'No se pudo agregar el horario de profesor'
       })
+    }
     res
       .status(201)
       .json({ status: 'success', message: 'Horario de profesor agregado' })
@@ -112,20 +113,22 @@ export const updateHorarioProfesor = async (req, res) => {
     fields.push('descripcion')
     values.push(descripcion)
   }
-  if (fields.length === 0)
+  if (fields.length === 0) {
     return res
       .status(400)
       .json({ status: 'error', message: 'Datos insuficientes' })
+  }
 
   sql += fields.map((field) => ` ${field} = ?`).join(', ')
   sql += ' WHERE idhorario = ?'
   values.push(id)
   try {
     const [result] = await pool.execute(sql, values)
-    if (result.affectedRows === 0)
+    if (result.affectedRows === 0) {
       return res
         .status(400)
         .json({ status: 'error', message: 'No se pudo actualizar el horario' })
+    }
 
     res
       .status(200)
@@ -143,10 +146,11 @@ export const deleteHorarioProfesor = async (req, res) => {
       'DELETE FROM horario_profesor WHERE idhorario = ?',
       [id]
     )
-    if (result.affectedRows === 0)
+    if (result.affectedRows === 0) {
       return res
         .status(400)
         .json({ status: 'error', message: 'No se pudo eliminar el horario' })
+    }
     res
       .status(200)
       .json({ status: 'success', message: 'Horario de profesor eliminado' })
