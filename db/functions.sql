@@ -79,51 +79,88 @@ CREATE FUNCTION `validar_material_prestamo` (
 RETURNS BOOLEAN
 DETERMINISTIC
 BEGIN
+    -- Declaraciones de variables
     DECLARE v_current_estado ENUM('P','C','A','D','F');
-    DECLARE v_total_cantidad_prestada INT DEFAULT 0;
-    DECLARE v_inventario_cantidad INT DEFAULT 0;
     DECLARE v_prestamo_hora_inicio TIME;
     DECLARE v_prestamo_duracion INT;
-    DECLARE v_cantidad_disponible INT DEFAULT 0;
-
-    -- Obtener el estado y detalles del préstamo
+    DECLARE v_inventario_cantidad INT DEFAULT 0;
+    DECLARE v_total_cantidad_prestada INT DEFAULT 0;
+    DECLARE v_cantidad_disponible INT;
+    
+    -- Variables para el cursor
+    DECLARE v_cursor_idprestamo INT;
+    DECLARE v_cursor_horaInicio TIME;
+    DECLARE v_cursor_duracion INT;
+    DECLARE v_cursor_cantidad INT;
+    DECLARE v_done INT DEFAULT FALSE;
+    
+    -- Cursor para préstamos conflictivos
+    DECLARE conflicto_cursor CURSOR FOR 
+    SELECT 
+        p.idprestamo, 
+        p.horaInicio, 
+        p.duracion,
+        COALESCE(m.cantidad, 0) as cantidad
+    FROM prestamo p
+    LEFT JOIN material m ON p.idprestamo = m.idprestamo
+    WHERE 
+        p.idlaboratorio = p_idlaboratorio
+        AND p.estado = 'A'
+        AND m.idunidad = p_idunidad
+        AND (
+            -- Condiciones de superposición de intervalos de tiempo
+            (p.horaInicio <= (SELECT horaInicio FROM prestamo WHERE idprestamo = p_idprestamo)
+             AND ADDTIME(p.horaInicio, SEC_TO_TIME(p.duracion * 3600)) > (SELECT horaInicio FROM prestamo WHERE idprestamo = p_idprestamo))
+            OR
+            (p.horaInicio >= (SELECT horaInicio FROM prestamo WHERE idprestamo = p_idprestamo)
+             AND p.horaInicio < ADDTIME((SELECT horaInicio FROM prestamo WHERE idprestamo = p_idprestamo), SEC_TO_TIME((SELECT duracion FROM prestamo WHERE idprestamo = p_idprestamo) * 3600)))
+        );
+    
+    -- Declaración de handler para el fin del cursor
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_done = TRUE;
+    
+    -- Obtener el estado y detalles del préstamo actual
     SELECT estado, horaInicio, duracion 
     INTO v_current_estado, v_prestamo_hora_inicio, v_prestamo_duracion
     FROM prestamo 
     WHERE idprestamo = p_idprestamo;
-
+    
     -- Validar estado del préstamo
     IF v_current_estado NOT IN ('P', 'A') THEN
         RETURN FALSE;
     END IF;
-
+    
     -- Obtener la cantidad en inventario
     SELECT cantidad INTO v_inventario_cantidad
     FROM inventario 
     WHERE idlaboratorio = p_idlaboratorio 
       AND idunidad = p_idunidad;
-
-    -- Calcular cantidad total prestada en intervalos conflictivos
-    SELECT COALESCE(SUM(m.cantidad), 0) INTO v_total_cantidad_prestada
-    FROM material m
-    JOIN prestamo p ON m.idprestamo = p.idprestamo
-    JOIN prestamo p_actual ON p_actual.idprestamo = p_idprestamo
-    WHERE m.idlaboratorio = p_idlaboratorio 
-      AND m.idunidad = p_idunidad
-      AND p.estado = 'A'
-      AND (
-          (p.horaInicio <= p_actual.horaInicio 
-           AND ADDTIME(p.horaInicio, SEC_TO_TIME(p.duracion * 3600)) > p_actual.horaInicio)
-          OR 
-          (p.horaInicio >= p_actual.horaInicio 
-           AND p.horaInicio < ADDTIME(p_actual.horaInicio, SEC_TO_TIME(p_actual.duracion * 3600)))
-      );
-
-    -- Calcular la cantidad disponible
-    SET v_cantidad_disponible = v_inventario_cantidad - v_total_cantidad_prestada; 
-
+    
+    -- Abrir el cursor
+    OPEN conflicto_cursor;
+    
+    -- Recorrer los préstamos conflictivos
+    read_loop: LOOP
+        FETCH conflicto_cursor 
+        INTO v_cursor_idprestamo, v_cursor_horaInicio, v_cursor_duracion, v_cursor_cantidad;
+        
+        -- Salir si no hay más registros
+        IF v_done THEN
+            LEAVE read_loop;
+        END IF;
+        
+        -- Sumar la cantidad de préstamos conflictivos
+        SET v_total_cantidad_prestada = v_total_cantidad_prestada + v_cursor_cantidad;
+    END LOOP;
+    
+    -- Cerrar el cursor
+    CLOSE conflicto_cursor;
+    
+    -- Calcular cantidad disponible
+    SET v_cantidad_disponible = v_inventario_cantidad - v_total_cantidad_prestada;
+    
     -- Verificar si la cantidad solicitada supera la cantidad disponible
     RETURN p_cantidad <= v_cantidad_disponible;
-END$$
+END $$
 
 DELIMITER;
