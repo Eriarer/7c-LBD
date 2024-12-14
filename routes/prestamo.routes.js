@@ -14,7 +14,7 @@ const router = express.Router()
 router.post('/create', addPrestamo)
 
 router.get('/get', getPrestamos)
-router.get('/get/:id', getPrestamoById)
+router.get('/get/prestamo/:id', getPrestamoById)
 router.get('/get/usuario/:idusuario', getPrestamoByIdUsuario)
 
 router.delete('/delete/:id/:estado', deletePrestamo)
