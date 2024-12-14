@@ -35,9 +35,7 @@ export const addUsuario = async (req, res) => {
     res.status(201).json({ status: 'success', message: 'Usuario creado' })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({ status: 'error', status: 'error', message: error.message })
+    res.status(500).json({ status: 'error', message: error.message })
   }
 }
 
@@ -53,9 +51,7 @@ export const deleteUsuario = async (req, res) => {
     res.status(200).json({ status: 'success', message: 'Usuario eliminado' })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({ status: 'error', status: 'error', message: error.message })
+    res.status(500).json({ status: 'error', message: error.message })
   }
 }
 
@@ -111,23 +107,19 @@ export const updateUsuario = async (req, res) => {
     res.status(200).json({ status: 'success', message: 'Usuario actualizado' })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({ status: 'error', status: 'error', message: error.message })
+    res.status(500).json({ status: 'error', message: error.message })
   }
 }
 
 export const getUsuarios = async (req, res) => {
   try {
     const [results] = await pool.query('SELECT * FROM usuario')
-    if (result.length === 0)
+    if (results.length === 0)
       res.status(404).json({ status: 'error', message: 'No hay usuarios' })
     res.status(200).json({ status: 'success', data: results })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({ status: 'error', status: 'error', message: error.message })
+    res.status(500).json({ status: 'error', message: error.message })
   }
 }
 
