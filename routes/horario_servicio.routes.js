@@ -6,7 +6,7 @@ import {
 } from '../schema/horario_servicio.schema.js'
 import {
   addHorarioServicio,
-  getHorariosServicios,
+  getHorariosServicio,
   getHorarioServicioById,
   deleteHorarioServicio,
   updateHorarioServicio
@@ -20,7 +20,7 @@ router.post(
   addHorarioServicio
 )
 
-router.get('/get', getHorariosServicios)
+router.get('/get', getHorariosServicio)
 router.get('/get/:id', getHorarioServicioById)
 
 router.delete('/delete/:id', deleteHorarioServicio)

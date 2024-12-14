@@ -1,6 +1,10 @@
 import express from 'express'
 import { validateSchema } from '../middleware/validateSchema.middleware.js'
 import {
+  addInventarioSchema,
+  updateInventarioSchema
+} from '../schema/laboratorio.schema.js'
+import {
   addLaboratorio,
   getLaboratorios,
   getLaboratorioById,

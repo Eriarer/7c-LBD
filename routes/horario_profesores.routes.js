@@ -7,7 +7,7 @@ import { validateSchema } from '../middleware/validateSchema.middleware.js'
 import {
   addHorarioProfesor,
   getHorariosProfesores,
-  getHorarioProfesorById,
+  getHorarioProfesor,
   deleteHorarioProfesor,
   updateHorarioProfesor
 } from '../controllers/horario_profesores.controller.js'
@@ -21,7 +21,7 @@ router.post(
 )
 
 router.get('/get', getHorariosProfesores)
-router.get('/get/:id', getHorarioProfesorById)
+router.get('/get/:id', getHorarioProfesor)
 
 router.delete('/delete/:id', deleteHorarioProfesor)
 
