@@ -15,10 +15,8 @@ export const addPrestamo = async (req, res) => {
   const connection = await pool.getConnection()
 
   try {
-    // Inicia la transacción
     await connection.beginTransaction()
 
-    // Inserta el préstamo
     const prestamoFields = [
       'idlaboratorio',
       'idusuario',
@@ -41,9 +39,10 @@ export const addPrestamo = async (req, res) => {
       prestamoValues.push(observaciones)
     }
 
-    const prestamoSql = `INSERT INTO prestamo (${prestamoFields.join(
-      ', '
-    )}) VALUES (${prestamoFields.map(() => '?').join(', ')})`
+    // utilizar el procedimiento insertar_prestamo
+    const prestamoSql = `CALL insertar_prestamo(${prestamoFields
+      .map(() => '?')
+      .join(', ')})`
     const [prestamoResult] = await connection.execute(
       prestamoSql,
       prestamoValues
