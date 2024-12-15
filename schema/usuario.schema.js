@@ -21,10 +21,22 @@ export const addUsuarioSchema = z.object({
   correo: z
     .string({ message: 'Correo es requerido' })
     .email({ message: 'Correo inválido' }),
+  password: z
+    .string({ message: 'Contraseña es requerida' })
+    .min(8, { message: 'Contraseña debe tener al menos 8 caracteres' })
+    .max(60, { message: 'Contraseña no puede exceder 60 caracteres' })
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}$/,
+      {
+        message:
+          'Contraseña debe tener al menos 8 caracteres, 1 mayúscula, 1 minúscula, 1 número y 1 caracter especial'
+      }
+    ),
   tipo: z
-    .string({ message: 'Tipo es requerido' })
-    .length(1, { message: 'Tipo debe ser un caracter' })
-    .regex(/^[MAE]$/, { message: 'Tipo debe ser M, A o E' }),
+    .enum(['ALUMNO', 'MAESTRO', 'EXTENRO', 'RESPONSABLE', 'AYUDANTE'], {
+      message: 'Tipo debe ser ALUMNO, MAESTRO, EXTERNO, RESPONSABLE o AYUDANTE'
+    })
+    .optional(),
   activo: z.boolean().optional()
 })
 
@@ -54,10 +66,54 @@ export const updateUsuarioSchema = z
       .optional(),
     correo: z.string().email({ message: 'Correo inválido' }).optional(),
     tipo: z
-      .string()
-      .length(1, { message: 'Tipo debe ser un caracter' })
-      .regex(/^[MAE]$/, { message: 'Tipo debe ser M, A o E' })
+      .enum(['ALUMNO', 'MAESTRO', 'EXTENRO', 'RESPONSABLE', 'AYUDANTE'], {
+        message:
+          'Tipo debe ser ALUMNO, MAESTRO, EXTERNO, RESPONSABLE o AYUDANTE'
+      })
       .optional(),
     activo: z.boolean().optional()
   })
   .partial()
+
+export const updatePasswordSchema = z.object({
+  password: z
+    .string({ message: 'Contraseña es requerida' })
+    .min(8, { message: 'Contraseña debe tener al menos 8 caracteres' })
+    .max(60, { message: 'Contraseña no puede exceder 60 caracteres' })
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}$/,
+      {
+        message:
+          'Contraseña debe tener al menos 8 caracteres, 1 mayúscula, 1 minúscula, 1 número y 1 caracter especial'
+      }
+    ),
+  confirmPassword: z.string().refine((data) => data === this.password, {
+    message: 'Las contraseñas no coinciden'
+  }),
+  newPassword: z
+    .string({ message: 'Contraseña es requerida' })
+    .min(8, { message: 'Contraseña debe tener al menos 8 caracteres' })
+    .max(60, { message: 'Contraseña no puede exceder 60 caracteres' })
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}$/,
+      {
+        message:
+          'Contraseña debe tener al menos 8 caracteres, 1 mayúscula, 1 minúscula, 1 número y 1 caracter especial'
+      }
+    )
+})
+
+export const loginSchema = z.object({
+  correo: z.string().email({ message: 'Correo inválido' }),
+  password: z
+    .string()
+    .min(8, { message: 'Contraseña debe tener al menos 8 caracteres' })
+    .max(60, { message: 'Contraseña no puede exceder 60 caracteres' })
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}$/,
+      {
+        message:
+          'Contraseña debe tener al menos 8 caracteres, 1 mayúscula, 1 minúscula, 1 número y 1 caracter especial'
+      }
+    )
+})

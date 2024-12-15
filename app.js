@@ -10,8 +10,8 @@ import lab_resRoutes from './routes/lab_res.routes.js'
 import laboratorioRoutes from './routes/laboratorio.routes.js'
 import materialRoutes from './routes/material.routes.js'
 import prestamoRoutes from './routes/prestamo.routes.js'
-import responsableRoutes from './routes/responsable.routes.js'
 import usuarioRoutes from './routes/usuario.routes.js'
+import authRoutes from './routes/auth.routes.js'
 import swaggerSpec from './swagger.js'
 
 const app = express()
@@ -29,8 +29,8 @@ app.use('/lab_res', lab_resRoutes)
 app.use('/laboratorio', laboratorioRoutes)
 app.use('/material', materialRoutes)
 app.use('/prestamo', prestamoRoutes)
-app.use('/responsable', responsableRoutes)
 app.use('/usuario', usuarioRoutes)
+app.use('/auth', authRoutes)
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 app.get('/', (req, res) => {
