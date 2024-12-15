@@ -42,3 +42,18 @@ BEGIN
 END $$
 
 DELIMITER;
+
+DELIMITER $$
+
+DROP TRIGGER IF EXISTS validar_prestamo$$
+
+CREATE TRIGGER validar_prestamo
+BEFORE INSERT ON prestamo
+FOR EACH ROW
+BEGIN
+    IF NEW.fecha < NOW() OR NEW.fecha > ADDDATE(NOW(), INTERVAL 14 DAY) THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'No se puede insertar el préstamo. Fecha inválida.';
+    END IF;
+
+END $$
