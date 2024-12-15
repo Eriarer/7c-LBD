@@ -4,7 +4,7 @@ import { loginSchema } from '../schema/usuario.schema.js'
 import {
   login,
   decodeToken,
-  regeneratToken
+  regenerateToken
 } from '../controllers/auth.controller.js'
 import {
   verifyToken,
@@ -18,7 +18,7 @@ router.post('/login', validateSchema(loginSchema), login)
 
 router.get('/decode', decodeToken)
 
-router.get('/refresh', refreshToken, regeneratToken)
+router.get('/refresh', refreshToken, regenerateToken)
 
 router.get('/logout', verifyToken, dropToken)
 

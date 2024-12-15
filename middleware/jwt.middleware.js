@@ -128,6 +128,7 @@ export const refreshToken = (req, res, next) => {
         message: 'No se proporcionó una autenticación'
       })
     }
+    BLACKLIST.push(token)
     req.user = decoded
     next()
   })

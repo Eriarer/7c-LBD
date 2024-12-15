@@ -54,7 +54,7 @@ export const decodeToken = (req, res) => {
   })
 }
 
-export const regeneratToken = (req, res) => {
+export const regenerateToken = (req, res) => {
   const { idusuario, nombre, apellido, correo, tipo } = req.user
   if (!idusuario || !nombre || !correo || !tipo) {
     return res.status(403).json({
