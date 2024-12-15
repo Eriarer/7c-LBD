@@ -1,3 +1,7 @@
+DELIMITER $$
+
+DROP FUNCTION IF EXISTS fun_prestamos_por_usuario$$
+
 CREATE FUNCTION fun_prestamos_por_usuario(idUsuario lab_managment.usuario.idusuario%TYPE)
 RETURNS VARCHAR(150)
 DETERMINISTIC
@@ -45,6 +49,8 @@ DELIMITER;
 USE `lab_managment`;
 
 DELIMITER $$
+
+DROP FUNCTION IF EXISTS fun_prestamo_finalizados$$
 
 CREATE FUNCTION fun_prestamo_finalizados(idLab INT, fechaInicio DATE, fechaFin DATE)
 RETURNS INT
