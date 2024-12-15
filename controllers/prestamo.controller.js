@@ -11,6 +11,7 @@ export const addPrestamo = async (req, res) => {
     estado,
     materiales
   } = req.body
+  console.log(req.body)
 
   const connection = await pool.getConnection()
 
@@ -23,33 +24,31 @@ export const addPrestamo = async (req, res) => {
       'fecha',
       'horaInicio',
       'duracion',
-      'estado'
+      'estado',
+      'observaciones'
     ]
     const prestamoValues = [
-      idlaboratorio,
-      idusuario,
-      fecha,
-      horaInicio,
-      duracion,
-      estado
+      idlaboratorio ?? null,
+      idusuario ?? null,
+      fecha ?? null,
+      horaInicio ?? null,
+      duracion ?? null,
+      estado ?? null,
+      observaciones ?? ''
     ]
 
-    if (observaciones) {
-      prestamoFields.push('observaciones')
-      prestamoValues.push(observaciones)
-    }
-
     // utilizar el procedimiento insertar_prestamo
-    const prestamoSql = `CALL insertar_prestamo(${prestamoFields
-      .map(() => '?')
-      .join(', ')})`
+    const prestamoSql =
+      'CALL insertar_prestamo(?, ?, ?, ?, ?, ?, @resultado, @mensaje)'
     const [prestamoResult] = await connection.execute(
       prestamoSql,
       prestamoValues
     )
 
-    if (prestamoResult.affectedRows === 0) {
-      throw new Error('No se pudo agregar el préstamo')
+    const [result] = await connection.execute('SELECT @resultado, @mensaje')
+
+    if (result[0]['@resultado'] === 0) {
+      throw new Error(result[0]['@mensaje'])
     }
 
     const idPrestamo = prestamoResult.insertId
@@ -96,7 +95,6 @@ export const addPrestamo = async (req, res) => {
       message: error.message || 'Algo salió mal, inténtalo más tarde'
     })
   } finally {
-    // Libera la conexión
     connection.release()
   }
 }
@@ -197,31 +195,31 @@ export const updatePrestamo = async (req, res) => {
   const values = []
   if (idlaboratorio) {
     fields.push('idlaboratorio = ?')
-    values.push(idlaboratorio)
+    values.push(idlaboratorio ?? null)
   }
   if (idusuario) {
     fields.push('idusuario = ?')
-    values.push(idusuario)
+    values.push(idusuario ?? null)
   }
   if (fecha) {
     fields.push('fecha = ?')
-    values.push(fecha)
+    values.push(fecha ?? null)
   }
   if (horaInicio) {
     fields.push('horaInicio = ?')
-    values.push(horaInicio)
+    values.push(horaInicio ?? null)
   }
   if (duracion) {
     fields.push('duracion = ?')
-    values.push(duracion)
+    values.push(duracion ?? null)
   }
   if (observaciones) {
     fields.push('observaciones = ?')
-    values.push(observaciones)
+    values.push(observaciones ?? null)
   }
   if (estado) {
     fields.push('estado = ?')
-    values.push(estado)
+    values.push(estado ?? null)
   }
   values.push(id)
   const sql = `UPDATE prestamo SET ${fields.join(', ')} WHERE idprestamo = ?`

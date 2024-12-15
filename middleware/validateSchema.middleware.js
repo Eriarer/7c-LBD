@@ -3,7 +3,6 @@ import { z } from 'zod'
 export const validateSchema = (schema) => {
   return (req, res, next) => {
     try {
-      console.log('req.body', req.body)
       req.body = schema.parse(req.body)
       next()
     } catch (error) {
@@ -12,6 +11,7 @@ export const validateSchema = (schema) => {
           campo: err.path[0],
           message: err.message
         }))
+        console.error('Error de validación:', errorMessages)
         return res.status(400).json({
           error: 'Error de validación',
           message: errorMessages
