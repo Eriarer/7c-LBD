@@ -33,7 +33,7 @@ export const addUsuarioSchema = z.object({
       }
     ),
   tipo: z
-    .enum(['ALUMNO', 'MAESTRO', 'EXTENRO', 'RESPONSABLE', 'AYUDANTE'], {
+    .enum(['ALUMNO', 'MAESTRO', 'EXTERNO', 'RESPONSABLE', 'AYUDANTE'], {
       message: 'Tipo debe ser ALUMNO, MAESTRO, EXTERNO, RESPONSABLE o AYUDANTE'
     })
     .optional(),
