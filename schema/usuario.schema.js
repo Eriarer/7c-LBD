@@ -66,7 +66,7 @@ export const updateUsuarioSchema = z
       .optional(),
     correo: z.string().email({ message: 'Correo inválido' }).optional(),
     tipo: z
-      .enum(['ALUMNO', 'MAESTRO', 'EXTENRO', 'RESPONSABLE', 'AYUDANTE'], {
+      .enum(['ALUMNO', 'MAESTRO', 'EXTERNO', 'RESPONSABLE', 'AYUDANTE'], {
         message:
           'Tipo debe ser ALUMNO, MAESTRO, EXTERNO, RESPONSABLE o AYUDANTE'
       })
