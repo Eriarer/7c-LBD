@@ -42,12 +42,12 @@ const createPrestamo = async (
       idlaboratorio,
       idusuario,
       fecha,
-      horaInicio,
+      horainicio,
       duracion
     })
     console.log(`Prestamo creado: ${response.data.message}`)
   } catch (error) {
-    // console.error('Error creating loan:', error)
+    console.error('Error creating loan:', error?.response.data.message)
   }
 }
 
@@ -57,13 +57,20 @@ const main = async () => {
     const usuarios = await getUsuarios()
     const laboratorios = await getLaboratorios()
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 30; i++) {
       const randomUsuario =
         usuarios[Math.floor(Math.random() * usuarios.length)]
       const randomLaboratorio =
         laboratorios[Math.floor(Math.random() * laboratorios.length)]
-      const fecha = new Date().toISOString().split('T')[0]
-      const horaInicio = `${Math.floor(Math.random() * 24)
+      // la fecha puede ser desde hoy a 14 días en el futuro
+      let fecha = new Date().toISOString().split('T')[0]
+      fecha = new Date(
+        new Date(fecha).getTime() +
+          Math.floor(Math.random() * 14) * 24 * 60 * 60 * 1000
+      )
+        .toISOString()
+        .split('T')[0]
+      const horainicio = `${Math.floor(Math.random() * 24)
         .toString()
         .padStart(2, '0')}:00:00`
       const duracion = Math.floor(Math.random() * 4) + 1
@@ -75,7 +82,7 @@ const main = async () => {
         randomLaboratorio.idlaboratorio,
         randomUsuario.idusuario,
         fecha,
-        horaInicio,
+        horainicio,
         duracion
       )
     }

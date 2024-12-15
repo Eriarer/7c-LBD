@@ -5,13 +5,39 @@ export const addPrestamo = async (req, res) => {
     idlaboratorio,
     idusuario,
     fecha,
-    horaInicio,
+    horainicio,
     duracion,
     observaciones,
-    estado,
     materiales
   } = req.body
   console.log(req.body)
+
+  // Validate required fields
+  if (!idlaboratorio) {
+    res
+      .status(400)
+      .json({ status: 'error', message: 'El id del laboratorio es requerido' })
+  }
+  if (!idusuario) {
+    res
+      .status(400)
+      .json({ status: 'error', message: 'El id del usuario es requerido' })
+  }
+  if (!fecha) {
+    return res
+      .status(400)
+      .json({ status: 'error', message: 'La fecha es requerida' })
+  }
+  if (!horainicio) {
+    return res
+      .status(400)
+      .json({ status: 'error', message: 'La hora de inicio es requerida' })
+  }
+  if (!duracion) {
+    return res
+      .status(400)
+      .json({ status: 'error', message: 'La duración es requerida' })
+  }
 
   const connection = await pool.getConnection()
 
@@ -22,19 +48,17 @@ export const addPrestamo = async (req, res) => {
       'idlaboratorio',
       'idusuario',
       'fecha',
-      'horaInicio',
+      'horainicio',
       'duracion',
-      'estado',
       'observaciones'
     ]
     const prestamoValues = [
       idlaboratorio ?? null,
       idusuario ?? null,
       fecha ?? null,
-      horaInicio ?? null,
+      horainicio ?? null,
       duracion ?? null,
-      estado ?? null,
-      observaciones ?? ''
+      observaciones ?? null
     ]
 
     // utilizar el procedimiento insertar_prestamo
@@ -186,7 +210,7 @@ export const updatePrestamo = async (req, res) => {
     idlaboratorio,
     idusuario,
     fecha,
-    horaInicio,
+    horainicio,
     duracion,
     observaciones,
     estado
@@ -205,9 +229,9 @@ export const updatePrestamo = async (req, res) => {
     fields.push('fecha = ?')
     values.push(fecha ?? null)
   }
-  if (horaInicio) {
-    fields.push('horaInicio = ?')
-    values.push(horaInicio ?? null)
+  if (horainicio) {
+    fields.push('horainicio = ?')
+    values.push(horainicio ?? null)
   }
   if (duracion) {
     fields.push('duracion = ?')

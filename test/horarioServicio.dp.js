@@ -5,7 +5,7 @@ const BASEURL = 'http://localhost:3000'
 const horario = {
   hora_inicio: '08:00:00',
   hora_cierre: '20:00:00',
-  dias: 'LU,Ma,Mi,Ju,Vi'
+  dias: 'LU,MA,MI,JU,VI'
 }
 
 const main = async () => {
