@@ -1,12 +1,23 @@
+import argon2 from 'argon2'
 import { pool } from '../db/db.js'
 
 export const addUsuario = async (req, res) => {
-  const { idusuario, nombre, apellido, carrera, correo, tipo, activo } =
-    req.body
+  const {
+    idusuario,
+    nombre,
+    apellido,
+    carrera,
+    correo,
+    password,
+    tipo,
+    activo
+  } = req.body
+
+  const hasedPassword = await argon2.hash(password)
 
   let sql = 'INSERT INTO usuario'
-  const fields = ['idusuario', 'nombre', 'correo']
-  const values = [idusuario, nombre, correo]
+  const fields = ['idusuario', 'nombre', 'correo', 'password']
+  const values = [idusuario, nombre, correo, hasedPassword]
 
   if (apellido) {
     fields.push('apellido')
@@ -36,7 +47,10 @@ export const addUsuario = async (req, res) => {
     res.status(201).json({ status: 'success', message: 'Usuario creado' })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
@@ -52,7 +66,10 @@ export const deleteUsuario = async (req, res) => {
     res.status(200).json({ status: 'success', message: 'Usuario eliminado' })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
@@ -108,7 +125,55 @@ export const updateUsuario = async (req, res) => {
     res.status(200).json({ status: 'success', message: 'Usuario actualizado' })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
+  }
+}
+
+export const updatePassword = async (req, res) => {
+  const { id } = req.params
+  const { password, newPassword } = req.body
+
+  try {
+    const [oldPassword] = await pool.query(
+      'SELECT password FROM usuario WHERE idusuario = ?',
+      [id]
+    )
+    if (oldPassword.length === 0) {
+      return res.status(400).json({ error: 'Usuario no encontrado' })
+    }
+    if (!(await argon2.verify(oldPassword[0].password, password))) {
+      return res.status(400).json({ error: 'Contraseña incorrecta' })
+    }
+  } catch (error) {
+    console.log(error)
+    return res
+      .status(500)
+      .json({ error: 'Algo ah salido mal, intentalo más tarde' })
+  }
+
+  const hashedPassword = await argon2.hash(newPassword)
+
+  try {
+    const [results] = await pool.query(
+      'UPDATE usuario SET password = ? WHERE idusuario = ?',
+      [hashedPassword, id]
+    )
+
+    if (!results || results.affectedRows === 0) {
+      throw new Error('Hubo un error al actualizar la contraseña')
+    }
+    res
+      .status(200)
+      .json({ status: 'success', message: 'Contraseña actualizada' })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
@@ -121,7 +186,10 @@ export const getUsuarios = async (req, res) => {
     res.status(200).json({ status: 'success', data: results })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
@@ -138,6 +206,9 @@ export const getUsuarioById = async (req, res) => {
     res.status(200).json({ status: 'success', data: results })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }

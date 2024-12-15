@@ -16,7 +16,12 @@ export const addMateriales = async (req, res) => {
     res.status(201).json({ status: 'success', message: 'Material agregado' })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }
 
@@ -29,7 +34,12 @@ export const getMateriales = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }
 
@@ -51,7 +61,12 @@ export const getMaterialById = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }
 
@@ -72,6 +87,11 @@ export const deleteMaterial = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }

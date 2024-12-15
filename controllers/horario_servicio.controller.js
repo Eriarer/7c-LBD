@@ -19,7 +19,12 @@ export const addHorarioServicio = async (req, res) => {
       .json({ status: 'success', message: 'Horario de servicio agregado' })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }
 
@@ -34,7 +39,12 @@ export const getHorariosServicio = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }
 
@@ -51,7 +61,12 @@ export const getHorarioServicioById = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }
 
@@ -68,7 +83,12 @@ export const deleteHorarioServicio = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }
 
@@ -91,6 +111,11 @@ export const updateHorarioServicio = async (req, res) => {
     res.status(200).json({ status: 'success', message: 'Horario actualizado' })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }

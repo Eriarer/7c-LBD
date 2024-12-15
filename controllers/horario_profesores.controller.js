@@ -37,7 +37,12 @@ export const addHorarioProfesor = async (req, res) => {
       .json({ status: 'success', message: 'Horario de profesor agregado' })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }
 
@@ -52,7 +57,12 @@ export const getHorariosProfesores = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }
 
@@ -71,7 +81,12 @@ export const getHorarioProfesor = async (req, res) => {
     res.status(200).json({ status: 'success', data: result[0] })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }
 
@@ -135,7 +150,12 @@ export const updateHorarioProfesor = async (req, res) => {
       .json({ status: 'success', message: 'Horario de profesor actualizado' })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }
 
@@ -156,6 +176,11 @@ export const deleteHorarioProfesor = async (req, res) => {
       .json({ status: 'success', message: 'Horario de profesor eliminado' })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }

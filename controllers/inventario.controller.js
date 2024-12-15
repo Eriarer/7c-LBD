@@ -16,7 +16,12 @@ export const addInventario = async (req, res) => {
     res.status(201).json({ status: 'success', message: 'Inventario agregado' })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }
 
@@ -31,7 +36,12 @@ export const getInventarios = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }
 
@@ -47,7 +57,12 @@ export const getInventarioById = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }
 
@@ -65,7 +80,12 @@ export const deleteInventario = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }
 
@@ -98,18 +118,21 @@ export const updateInventario = async (req, res) => {
   try {
     const [result] = await pool.execute(sql, values)
     if (result.affectedRows === 0) {
-      return res
-        .status(400)
-        .json({
-          status: 'error',
-          message: 'No se pudo actualizar el inventario'
-        })
+      return res.status(400).json({
+        status: 'error',
+        message: 'No se pudo actualizar el inventario'
+      })
     }
     res
       .status(200)
       .json({ status: 'success', message: 'Inventario actualizado' })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }

@@ -26,7 +26,12 @@ export const addEquipo = async (req, res) => {
     res.status(201).json({ status: 'success', message: 'Equipo agregado' })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }
 
@@ -39,7 +44,12 @@ export const getEquipos = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }
 
@@ -54,7 +64,12 @@ export const getEquipoById = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }
 
@@ -71,7 +86,12 @@ export const deleteEquipo = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }
 
@@ -114,6 +134,11 @@ export const updateEquipo = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ status: 'error', message: error.message })
+    res
+      .status(500)
+      .json({
+        status: 'error',
+        message: 'Algo ah salido mal, intentalo más tarde'
+      })
   }
 }
