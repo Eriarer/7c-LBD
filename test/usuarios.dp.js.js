@@ -93,9 +93,7 @@ const getRandomElement = (array) => {
 }
 
 const generateName = () => {
-  const name = `${getRandomElement(PREFIX)}${getRandomElement(SUFFIX)}`
-  console.log(name)
-  return name
+  return `${getRandomElement(PREFIX)}${getRandomElement(SUFFIX)}`
 }
 
 const generateLastName = () => {
@@ -160,7 +158,7 @@ const main = async () => {
     'SELECT MAX(CAST(idusuario AS unsigned)) as id FROM usuario'
   )
   const last_id = result[0][0].id == null ? 0 : parseInt(result[0][0].id) + 1
-  const paro = last_id + 5
+  const paro = last_id + 50
   console.log('Iniciando inserción de usuarios')
 
   for (let i = last_id; i < paro; i++) {
