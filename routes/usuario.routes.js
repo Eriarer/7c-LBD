@@ -27,8 +27,8 @@ router.post(
   updatePassword
 )
 
-router.get('/find', getUsuarios)
+router.get('/get', getUsuarios)
 
-router.get('/find/:id', getUsuarioById)
+router.get('/get/:id', getUsuarioById)
 
 export default router

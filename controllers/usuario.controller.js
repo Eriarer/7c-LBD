@@ -179,7 +179,9 @@ export const updatePassword = async (req, res) => {
 
 export const getUsuarios = async (req, res) => {
   try {
-    const [results] = await pool.query('SELECT * FROM usuario')
+    const [results] = await pool.query(
+      'SELECT idusuario, nombre, apellido, carrera, correo, tipo, activo FROM usuario'
+    )
     if (results.length === 0) {
       res.status(404).json({ status: 'error', message: 'No hay usuarios' })
     }
@@ -196,7 +198,8 @@ export const getUsuarios = async (req, res) => {
 export const getUsuarioById = async (req, res) => {
   const { id } = req.params
   try {
-    const sql = 'SELECT * FROM usuario WHERE idusuario = ?'
+    const sql =
+      'SELECT idusuario, nombre, apellido, carrera, correo, tipo, activo FROM usuario WHERE idusuario = ?'
     const [results] = await pool.query(sql, [id])
     if (results.length === 0) {
       res
