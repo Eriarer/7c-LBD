@@ -10,11 +10,11 @@ import { addMaterialSchema } from '../schema/material.schema.js'
 
 const router = express.Router()
 
-router.post('/', validateSchema(addMaterialSchema), addMateriales)
+router.post('/create', validateSchema(addMaterialSchema), addMateriales)
 
-router.get('/', getMateriales)
-router.get('/:id', getMaterialById)
+router.get('/get', getMateriales)
+router.get('/get/:id', getMaterialById)
 
-router.delete('/:id', deleteMaterial)
+router.delete('/delete/:id', deleteMaterial)
 
 export default router

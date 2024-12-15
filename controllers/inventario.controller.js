@@ -16,12 +16,10 @@ export const addInventario = async (req, res) => {
     res.status(201).json({ status: 'success', message: 'Inventario agregado' })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
@@ -36,12 +34,10 @@ export const getInventarios = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
@@ -57,12 +53,10 @@ export const getInventarioById = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
@@ -80,12 +74,10 @@ export const deleteInventario = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
@@ -128,11 +120,9 @@ export const updateInventario = async (req, res) => {
       .json({ status: 'success', message: 'Inventario actualizado' })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
