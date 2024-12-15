@@ -1,4 +1,5 @@
 import 'dotenv/config'
+import axios from 'axios'
 import { pool } from '../db/db.js' //Importando la piscina de conexiones
 
 const nombres = [
@@ -37,7 +38,7 @@ const carrera = [
   'Gestion',
   'Ambiental'
 ]
-const tipo = ['A', 'M', 'E']
+const tipo = ['ALUMNO', 'MAESTRO', 'EXTERNO', 'RESPONSABLE', 'AYUDANTE']
 
 const getRandomElement = (array) => {
   const randomIndex = Math.floor(Math.random() * array.length)
@@ -45,7 +46,7 @@ const getRandomElement = (array) => {
 }
 
 const generateEmail = (nombre, apellido) => {
-  return `${nombre.toLowerCase()}.${apellido.toLowerCase()}@gmail.com`
+  return `${nombre.toLowerCase()}.${apellido.toLowerCase()}@localhost.com`
 }
 
 //Función para dar un número aleatorio de 6 dígitos
@@ -54,7 +55,7 @@ const getRandomNumber = () => {
 }
 
 const insertUser = async (
-  id,
+  idusuario,
   nombre,
   apellido,
   carrera,
@@ -62,25 +63,34 @@ const insertUser = async (
   tipo,
   activo
 ) => {
-  const sql =
-    'INSERT INTO usuario (idusuario, nombre, apellido, carrera, correo, tipo, activo) VALUES (?, ?, ?, ?, ?, ?, ?)'
+  // el nombre tiene que tener al menos 8 caracteres
+  // de no serlo rellenar con 1's hasta completar los 8 caracteres
+  const password = nombre.padEnd(7, '1').concat('!')
+  const user = {
+    idusuario,
+    nombre,
+    apellido,
+    carrera,
+    correo,
+    password,
+    tipo,
+    activo
+  }
   try {
-    const result = await pool.query(sql, [
-      id,
-      nombre,
-      apellido,
-      carrera,
-      correo,
-      tipo,
-      activo
-    ])
-    if (result[0].affectedRows === 1) {
-      console.log('Usuario insertado', id)
+    const response = await axios.post(
+      'http://localhost:3000/usuario/create',
+      user
+    )
+    if (response.status === 201) {
+      console.log('Usuario insertado', idusuario)
     } else {
-      console.log('Error en la insercion', result[0].message)
+      console.log('Error en la insercion', response.data.message)
     }
   } catch (error) {
-    console.error('Error en la insercion', error)
+    console.error(
+      'Error en la insercion',
+      error.response ? error.response.data : error.message
+    )
   }
 }
 
@@ -104,12 +114,6 @@ const main = async () => {
     const activo = Math.random() > 0.25 ? true : false
     await insertUser(i, nombre, apellidos, carreras, correos, tipos, activo)
   }
-
-  await pool.query('SELECT * FROM usuario').then((result) => {
-    console.log(result[0])
-  })
-
-  await pool.end()
 }
 
 main()

@@ -39,7 +39,7 @@ export const login = async (req, res) => {
   }
 }
 
-export const decodeToken = (req, res) => {
+export const readToken = (req, res) => {
   const { idusuario, nombre, apellido, correo, tipo } = req.user
   if (!idusuario || !nombre || !correo || !tipo) {
     return res.status(403).json({
