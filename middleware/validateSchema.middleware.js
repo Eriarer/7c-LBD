@@ -3,6 +3,7 @@ import { z } from 'zod'
 export const validateSchema = (schema) => {
   return (req, res, next) => {
     try {
+      console.log('req.body', req.body)
       req.body = schema.parse(req.body)
       next()
     } catch (error) {
@@ -12,8 +13,8 @@ export const validateSchema = (schema) => {
           message: err.message
         }))
         return res.status(400).json({
-          error: 'Validation failed',
-          details: errorMessages
+          error: 'Error de validación',
+          message: errorMessages
         })
       }
       res.status(500).json({ error: 'Internal server error' })

@@ -1,10 +1,36 @@
 import { pool } from '../db/db.js'
 
 export const addLaboratorio = async (req, res) => {
-  const { plantel, num_ed, aula, departamento, cupo } = req.body
+  const {
+    plantel,
+    num_ed,
+    aula,
+    departamento,
+    cupo,
+    latitude,
+    longitude,
+    descripcion
+  } = req.body
   let sql = 'INSERT INTO laboratorio'
-  const fields = ['plantel', 'num_ed', 'aula', 'departamento', 'cupo']
-  const values = [plantel, num_ed, aula, departamento, cupo]
+  const fields = ['num_ed', 'cupo', 'latitude', 'longitude']
+  const values = [num_ed, cupo, latitude, longitude]
+  if (plantel) {
+    fields.push('plantel')
+    values.push(plantel)
+  }
+  if (aula) {
+    fields.push('aula')
+    values.push(aula)
+  }
+  if (departamento) {
+    fields.push('departamento')
+    values.push(departamento)
+  }
+  if (descripcion) {
+    fields.push('descripcion')
+    values.push(descripcion)
+  }
+
   sql += ` (${fields.join(', ')}) VALUES (${fields.map(() => '?').join(', ')})`
   try {
     const [result] = await pool.execute(sql, values)
@@ -16,12 +42,10 @@ export const addLaboratorio = async (req, res) => {
     res.status(201).json({ status: 'success', message: 'Laboratorio agregado' })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
@@ -36,12 +60,10 @@ export const getLaboratorios = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
@@ -58,12 +80,10 @@ export const getLaboratorioById = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
@@ -82,18 +102,25 @@ export const deleteLaboratorio = async (req, res) => {
       .json({ status: 'success', message: 'Laboratorio eliminado' })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
 export const updateLaboratorio = async (req, res) => {
   const { id } = req.params
-  const { plantel, num_ed, aula, departamento, cupo } = req.body
+  const {
+    plantel,
+    num_ed,
+    aula,
+    departamento,
+    cupo,
+    latitude,
+    longitude,
+    descripcion
+  } = req.body
   let sql = 'UPDATE laboratorio SET '
   const values = []
   const fields = []
@@ -117,6 +144,18 @@ export const updateLaboratorio = async (req, res) => {
     fields.push('cupo')
     values.push(cupo)
   }
+  if (latitude) {
+    fields.push('latitude')
+    values.push(latitude)
+  }
+  if (longitude) {
+    fields.push('longitude')
+    values.push(longitude)
+  }
+  if (descripcion) {
+    fields.push('descripcion')
+    values.push(descripcion)
+  }
   if (values.length === 0) {
     return res
       .status(400)
@@ -138,11 +177,9 @@ export const updateLaboratorio = async (req, res) => {
       .json({ status: 'success', message: 'Laboratorio actualizado' })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
