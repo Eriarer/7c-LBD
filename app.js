@@ -1,4 +1,5 @@
 import express from 'express'
+import cors from 'cors'
 import swaggerUi from 'swagger-ui-express'
 import morgan from 'morgan'
 import equipo from './routes/equipo.routes.js'
@@ -15,6 +16,7 @@ import swaggerSpec from './swagger.js'
 
 const app = express()
 
+app.use(cors())
 app.use(express.json())
 app.use(morgan('dev'))
 app.use(express.urlencoded({ extended: true }))
