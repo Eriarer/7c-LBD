@@ -8,39 +8,97 @@ export const addPrestamo = async (req, res) => {
     horaInicio,
     duracion,
     observaciones,
-    estado
+    estado,
+    materiales
   } = req.body
-  let sql = 'INSERT INTO prestamo'
-  const fields = [
-    'idlaboratorio',
-    'idusuario',
-    'fecha',
-    'horaInicio',
-    'duracion',
-    'estado'
-  ]
-  const values = [idlaboratorio, idusuario, fecha, horaInicio, duracion, estado]
-  if (observaciones) {
-    fields.push('observaciones')
-    values.push(observaciones)
-  }
-  sql += ` (${fields.join(', ')}) VALUES (${fields.map(() => '?').join(', ')})`
+
+  const connection = await pool.getConnection()
+
   try {
-    const [result] = await pool.execute(sql, values)
-    if (result.affectedRows === 0) {
-      res
-        .status(400)
-        .json({ status: 'error', message: 'No se pudo agregar el prestamo' })
+    // Inicia la transacción
+    await connection.beginTransaction()
+
+    // Inserta el préstamo
+    const prestamoFields = [
+      'idlaboratorio',
+      'idusuario',
+      'fecha',
+      'horaInicio',
+      'duracion',
+      'estado'
+    ]
+    const prestamoValues = [
+      idlaboratorio,
+      idusuario,
+      fecha,
+      horaInicio,
+      duracion,
+      estado
+    ]
+
+    if (observaciones) {
+      prestamoFields.push('observaciones')
+      prestamoValues.push(observaciones)
     }
-    res.status(201).json({ status: 'success', message: 'Préstamo agregado' })
-  } catch (error) {
-    console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
+
+    const prestamoSql = `INSERT INTO prestamo (${prestamoFields.join(
+      ', '
+    )}) VALUES (${prestamoFields.map(() => '?').join(', ')})`
+    const [prestamoResult] = await connection.execute(
+      prestamoSql,
+      prestamoValues
+    )
+
+    if (prestamoResult.affectedRows === 0) {
+      throw new Error('No se pudo agregar el préstamo')
+    }
+
+    const idPrestamo = prestamoResult.insertId
+
+    if (!materiales || materiales.length === 0) {
+      await connection.commit()
+      res.status(201).json({
+        status: 'success',
+        message: 'Préstamo agregado exitosamente'
       })
+    } else {
+      const materialSql =
+        'INSERT INTO material (idprestamo, idlaboratorio, idunidad, cantidad) VALUES (?, ?, ?, ?)'
+
+      for (const material of materiales) {
+        const { idunidad, cantidad } = material
+
+        if (!idunidad || !cantidad) {
+          throw new Error('Datos de material incompletos')
+        }
+
+        await connection.execute(materialSql, [
+          idPrestamo,
+          idlaboratorio,
+          idunidad,
+          cantidad
+        ])
+      }
+
+      // Confirma la transacción
+      await connection.commit()
+
+      res.status(201).json({
+        status: 'success',
+        message: 'Préstamo y materiales agregados exitosamente'
+      })
+    }
+  } catch (error) {
+    // Realiza un rollback si ocurre algún error
+    await connection.rollback()
+    console.error(error)
+    res.status(500).json({
+      status: 'error',
+      message: error.message || 'Algo salió mal, inténtalo más tarde'
+    })
+  } finally {
+    // Libera la conexión
+    connection.release()
   }
 }
 
@@ -53,12 +111,10 @@ export const getPrestamos = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
@@ -75,12 +131,10 @@ export const getPrestamoById = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
@@ -98,12 +152,10 @@ export const getPrestamoByIdUsuario = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
@@ -124,12 +176,10 @@ export const deletePrestamo = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
@@ -186,11 +236,9 @@ export const updatePrestamo = async (req, res) => {
     res.status(200).json({ status: 'success', message: 'Prestamo actualizado' })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }

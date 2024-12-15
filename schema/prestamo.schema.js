@@ -32,6 +32,22 @@ export const addPrestamoSchema = z.object({
     .length(1, { message: 'El estado debe ser un carácter' })
     .regex(/^[PCADF]$/, { message: 'El estado debe ser P, C, A, D o F' })
     .default('P') // Valor predeterminado 'P'
+    .optional(),
+  materiales: z
+    .array()
+    .items(
+      z.object({
+        idunidad: z
+          .number({ message: 'El Id de unidad es requerido' })
+          .int({ message: 'El Id de unidad debe ser un número entero' })
+          .positive({ message: 'El Id de unidad debe ser mayor a 0' }),
+        cantidad: z
+          .number({ message: 'La cantidad es requerida' })
+          .int({ message: 'La cantidad debe ser un número entero' })
+          .positive({ message: 'La cantidad debe ser mayor a 0' })
+      })
+    )
+    .optional()
 })
 
 export const updatePrestamoSchema = z

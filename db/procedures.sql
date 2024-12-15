@@ -4,6 +4,8 @@ DELIMITER;
 
 DELIMITER $$
 
+DROP PROCEDURE IF EXISTS `actualizar_horario` $$
+
 CREATE PROCEDURE actualizar_horario(
     IN p_idhorario INT,
     IN p_idlaboratorio INT,
