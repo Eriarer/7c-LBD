@@ -22,13 +22,23 @@ const getLaboratorios = async () => {
   }
 }
 
+const getInventory = async (idlaboratorio) => {
+  try {
+    const response = await axios.get(`${URL}/inventario/get/${idlaboratorio}`)
+    return response.data.data
+  } catch (error) {
+    console.error('Error fetching inventory:', error)
+  }
+}
+
 // Function to create a loan
 const createPrestamo = async (
   idlaboratorio,
   idusuario,
   fecha,
   horainicio,
-  duracion
+  duracion,
+  materiales = []
 ) => {
   try {
     console.log('Creating loan...', {
@@ -78,6 +88,17 @@ const main = async () => {
       console.log(
         `Creating loan for user ${randomUsuario.idusuario} in lab ${randomLaboratorio.idlaboratorio}`
       )
+
+      //por el inventario del laboratorio, pedir de 1 a 4 materiales
+      const inventario = await getInventory(randomLaboratorio.idlaboratorio)
+      const materiales = []
+      for (inventario of inventario) {
+        if (Math.random() < 0.8) continue
+        materiales.push({
+          idmaterial: inventario.idmaterial,
+          cantidad: Math.floor(Math.random() * 4) + 1
+        }
+      }
       await createPrestamo(
         randomLaboratorio.idlaboratorio,
         randomUsuario.idusuario,
