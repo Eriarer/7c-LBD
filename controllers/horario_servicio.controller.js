@@ -19,12 +19,10 @@ export const addHorarioServicio = async (req, res) => {
       .json({ status: 'success', message: 'Horario de servicio agregado' })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
@@ -39,20 +37,18 @@ export const getHorariosServicio = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
 export const getHorarioServicioById = async (req, res) => {
-  const { idhorario } = req.params
+  const { id } = req.params
   try {
     const sql = 'SELECT * FROM horario_servicio WHERE idhorario = ?'
-    const [result] = await pool.execute(sql, [idhorario])
+    const [result] = await pool.execute(sql, [id])
     if (result.length === 0) {
       return res
         .status(404)
@@ -61,20 +57,18 @@ export const getHorarioServicioById = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
 export const deleteHorarioServicio = async (req, res) => {
-  const { idhorario } = req.params
+  const { id } = req.params
   try {
     const sql = 'DELETE FROM horario_servicio WHERE idhorario = ?'
-    const [result] = await pool.execute(sql, [idhorario])
+    const [result] = await pool.execute(sql, [id])
     if (result.affectedRows === 0) {
       res
         .status(400)
@@ -83,24 +77,22 @@ export const deleteHorarioServicio = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
 export const updateHorarioServicio = async (req, res) => {
-  const { idhorario } = req.params
+  const { id } = req.params
   const { idlaboratorio, hora_inicio, hora_cierre, dias } = req.body
   let sql = 'UPDATE horario_servicio SET '
   const fields = ['idlaboratorio', 'hora_inicio', 'hora_cierre', 'dias']
   const values = [idlaboratorio, hora_inicio, hora_cierre, dias]
   sql += fields.map((field) => `${field} = ?`).join(', ')
   sql += ' WHERE idhorario = ?'
-  values.push(idhorario)
+  values.push(id)
   try {
     const [result] = await pool.execute(sql, values)
     if (result.affectedRows === 0) {
@@ -111,11 +103,9 @@ export const updateHorarioServicio = async (req, res) => {
     res.status(200).json({ status: 'success', message: 'Horario actualizado' })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
