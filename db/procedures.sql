@@ -132,7 +132,7 @@ BEGIN
     
     -- 7. Verificar que no se superponga con el horario de profesor
     SELECT COUNT(*) INTO v_conflictos 
-    FROM horario_profesor 
+    FROM horario_profesores 
     WHERE idlaboratorio = p_idlaboratorio 
       AND FIND_IN_SET(v_dia_nombre, REPLACE(dias, ' ', '')) > 0 
       AND (

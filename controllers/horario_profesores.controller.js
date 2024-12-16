@@ -9,7 +9,7 @@ export const addHorarioProfesor = async (req, res) => {
     dias,
     descripcion
   } = req.body
-  let sql = 'INSERT INTO horario_profesor'
+  let sql = 'INSERT INTO horario_profesores'
   const fields = [
     'idlaboratorio',
     'idusuario',
@@ -37,18 +37,16 @@ export const addHorarioProfesor = async (req, res) => {
       .json({ status: 'success', message: 'Horario de profesor agregado' })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
 export const getHorariosProfesores = async (req, res) => {
   try {
-    const [result] = await pool.execute('SELECT * FROM horario_profesor')
+    const [result] = await pool.execute('SELECT * FROM horario_profesores')
     if (result.length === 0) {
       return res
         .status(404)
@@ -57,12 +55,10 @@ export const getHorariosProfesores = async (req, res) => {
     res.status(200).json({ status: 'success', data: result })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
@@ -70,7 +66,7 @@ export const getHorarioProfesor = async (req, res) => {
   const { id } = req.params
   try {
     const [result] = await pool.execute(
-      'SELECT * FROM horario_profesor WHERE idhorario = ?',
+      'SELECT * FROM horario_profesores WHERE idhorario = ?',
       [id]
     )
     if (result.length === 0) {
@@ -81,12 +77,10 @@ export const getHorarioProfesor = async (req, res) => {
     res.status(200).json({ status: 'success', data: result[0] })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
@@ -101,7 +95,7 @@ export const updateHorarioProfesor = async (req, res) => {
     descripcion
   } = req.body
 
-  let sql = 'UPDATE horario_profesor SET '
+  let sql = 'UPDATE horario_profesores SET '
   const values = []
   const fields = []
   if (idlaboratorio) {
@@ -150,12 +144,10 @@ export const updateHorarioProfesor = async (req, res) => {
       .json({ status: 'success', message: 'Horario de profesor actualizado' })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
 
@@ -163,7 +155,7 @@ export const deleteHorarioProfesor = async (req, res) => {
   const { id } = req.params
   try {
     const [result] = await pool.execute(
-      'DELETE FROM horario_profesor WHERE idhorario = ?',
+      'DELETE FROM horario_profesores WHERE idhorario = ?',
       [id]
     )
     if (result.affectedRows === 0) {
@@ -176,11 +168,9 @@ export const deleteHorarioProfesor = async (req, res) => {
       .json({ status: 'success', message: 'Horario de profesor eliminado' })
   } catch (error) {
     console.log(error)
-    res
-      .status(500)
-      .json({
-        status: 'error',
-        message: 'Algo ah salido mal, intentalo más tarde'
-      })
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
   }
 }
