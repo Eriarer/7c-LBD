@@ -70,7 +70,7 @@ const main = async () => {
     const horaFin = hora + 1
     // formatear la hora a HH:MM:SS
     const hora_inicio = `${(hora + '').padStart(2, '0')}:00:00`
-    const hora_cierre = `${(hora + '').padStart(2, '0')}:00:00`
+    const hora_cierre = `${(horaFin + '').padStart(2, '0')}:00:00`
     // Obtener maestros aleatorios y agregar el hoarioprofesor
     for (const maestro of maestros) {
       if (Math.random() < 0.85) continue
