@@ -236,3 +236,20 @@ export const updatePrestamo = async (req, res) => {
     })
   }
 }
+
+export const resumenPrestamos = async (req, res) => {
+  try {
+    const sql = 'SELECT * FROM resumen_prestamo_por_laboratorio'
+    const [result] = await pool.execute(sql)
+    if (result.length === 0) {
+      res.status(404).json({ status: 'error', message: 'No hay prestamos' })
+    }
+    res.status(200).json({ status: 'success', data: result })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
+  }
+}

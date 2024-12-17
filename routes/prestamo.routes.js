@@ -10,7 +10,8 @@ import {
   getPrestamoById,
   getPrestamoByIdUsuario,
   deletePrestamo,
-  updatePrestamo
+  updatePrestamo,
+  resumenPrestamos
 } from '../controllers/prestamo.controller.js'
 
 const router = express.Router()
@@ -20,6 +21,8 @@ router.post('/create', validateSchema(addPrestamoSchema), addPrestamo)
 router.get('/get', getPrestamos)
 router.get('/get/prestamo/:id', getPrestamoById)
 router.get('/get/usuario/:idusuario', getPrestamoByIdUsuario)
+
+router.get('/resumen', resumenPrestamos)
 
 router.delete('/delete/:id/:estado', deletePrestamo)
 
