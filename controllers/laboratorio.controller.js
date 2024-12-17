@@ -183,3 +183,39 @@ export const updateLaboratorio = async (req, res) => {
     })
   }
 }
+
+export const getHorario = async (req, res) => {
+  try {
+    const { id, fecha } = req.params // idLaboratorio y fecha
+    if (!id) {
+      return res
+        .status(400)
+        .json({ message: 'El parámetro "id" es obligatorio' })
+    }
+    if (!fecha) {
+      return res
+        .status(400)
+        .json({ message: 'El parámetro "fecha" es obligatorio' })
+    }
+
+    // la fecha llega en formato YYYYMMDD trasformarla a YYYY-MM-DD
+    const fechaFormateada = `${fecha.slice(0, 4)}-${fecha.slice(
+      4,
+      6
+    )}-${fecha.slice(6, 8)}`
+    // Llamada a la función MySQL
+    const [result] = await pool.query(
+      'SELECT getHorasDisponibles(?, ?) AS horasDisponibles',
+      [id, fechaFormateada]
+    )
+
+    // obtener las horas disponibles del resultado.
+    // formatear las horas de HH:MM:SS.000... a HH:MM:SS
+    const horas = result[0].horasDisponibles.map((hora) => hora.slice(0, 8))
+    // Responder al cliente
+    res.status(200).json({ status: 'success', data: horas })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: 'Error al obtener las horas disponibles' })
+  }
+}

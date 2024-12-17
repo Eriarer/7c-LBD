@@ -9,7 +9,8 @@ import {
   getLaboratorios,
   getLaboratorioById,
   deleteLaboratorio,
-  updateLaboratorio
+  updateLaboratorio,
+  getHorario
 } from '../controllers/laboratorio.controller.js'
 
 const router = express.Router()
@@ -26,5 +27,8 @@ router.put(
   validateSchema(updateLaboratorioSchema),
   updateLaboratorio
 )
+
+//BOrrador porque quiero recibir 2 datos: idLaboratorio y fecha
+router.get('/gethorario/:id/:fecha', getHorario)
 
 export default router
