@@ -12,33 +12,6 @@ export const addPrestamo = async (req, res) => {
   } = req.body
   console.log(req.body)
 
-  // Validate required fields
-  if (!idlaboratorio) {
-    res
-      .status(400)
-      .json({ status: 'error', message: 'El id del laboratorio es requerido' })
-  }
-  if (!idusuario) {
-    res
-      .status(400)
-      .json({ status: 'error', message: 'El id del usuario es requerido' })
-  }
-  if (!fecha) {
-    return res
-      .status(400)
-      .json({ status: 'error', message: 'La fecha es requerida' })
-  }
-  if (!horainicio) {
-    return res
-      .status(400)
-      .json({ status: 'error', message: 'La hora de inicio es requerida' })
-  }
-  if (!duracion) {
-    return res
-      .status(400)
-      .json({ status: 'error', message: 'La duración es requerida' })
-  }
-
   const connection = await pool.getConnection()
 
   try {

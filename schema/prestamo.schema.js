@@ -26,15 +26,6 @@ export const addPrestamoSchema = z.object({
   observaciones: z
     .string()
     .max(300, { message: 'Las observaciones no pueden exceder 300 caracteres' })
-    .optional(),
-  estado: z
-    .string({ message: 'El estado es requerido' })
-    .length(1, { message: 'El estado debe ser un carácter' })
-    .regex(/^[PCADF]$/, { message: 'El estado debe ser P, C, A, D o F' })
-    .default('P') // Valor predeterminado 'P'
-    .optional(),
-  materiales: z
-    .array({ message: 'Los materiales deben ser un arreglo de objetos' })
     .optional()
 })
 
@@ -72,12 +63,6 @@ export const updatePrestamoSchema = z
       .max(300, {
         message: 'Las observaciones no pueden exceder 300 caracteres'
       })
-      .optional(),
-    estado: z
-      .string()
-      .length(1, { message: 'El estado debe ser un carácter' })
-      .regex(/^[PCADF]$/, { message: 'El estado debe ser P, C, A, D o F' })
-      .default('P')
       .optional()
   })
   .partial()
