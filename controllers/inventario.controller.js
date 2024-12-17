@@ -41,6 +41,26 @@ export const getInventarios = async (req, res) => {
   }
 }
 
+export const getInventarioFromLab = async (req, res) => {
+  const { idlaboratorio } = req.params
+  try {
+    const sql = 'SELECT * FROM inventario WHERE idlaboratorio = ?'
+    const [result] = await pool.execute(sql, [idlaboratorio])
+    if (result.length === 0) {
+      return res
+        .status(404)
+        .json({ status: 'error', message: 'No hay inventarios' })
+    }
+    res.status(200).json({ status: 'success', data: result })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      status: 'error',
+      message: 'Algo ah salido mal, intentalo más tarde'
+    })
+  }
+}
+
 export const getInventarioById = async (req, res) => {
   const { idlaboratorio, idunidad } = req.params
   try {
