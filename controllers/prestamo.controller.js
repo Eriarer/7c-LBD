@@ -17,14 +17,6 @@ export const addPrestamo = async (req, res) => {
   try {
     await connection.beginTransaction()
 
-    const prestamoFields = [
-      'idlaboratorio',
-      'idusuario',
-      'fecha',
-      'horainicio',
-      'duracion',
-      'observaciones'
-    ]
     const prestamoValues = [
       idlaboratorio ?? null,
       idusuario ?? null,
