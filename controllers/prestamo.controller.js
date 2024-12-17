@@ -183,35 +183,42 @@ export const updatePrestamo = async (req, res) => {
   const fields = []
   const values = []
   if (idlaboratorio) {
-    fields.push('idlaboratorio = ?')
+    fields.push('idlaboratorio')
     values.push(idlaboratorio ?? null)
   }
   if (idusuario) {
-    fields.push('idusuario = ?')
+    fields.push('idusuario')
     values.push(idusuario ?? null)
   }
   if (fecha) {
-    fields.push('fecha = ?')
+    fields.push('fecha')
     values.push(fecha ?? null)
   }
   if (horainicio) {
-    fields.push('horainicio = ?')
+    fields.push('horainicio')
     values.push(horainicio ?? null)
   }
   if (duracion) {
-    fields.push('duracion = ?')
+    fields.push('duracion')
     values.push(duracion ?? null)
   }
   if (observaciones) {
-    fields.push('observaciones = ?')
+    fields.push('observaciones')
     values.push(observaciones ?? null)
   }
   if (estado) {
-    fields.push('estado = ?')
+    fields.push('estado')
     values.push(estado ?? null)
   }
+  if (fields.length === 0) {
+    res
+      .status(400)
+      .json({ status: 'error', message: 'No hay campos a actualizar' })
+  }
+  const sql = `UPDATE prestamo SET ${fields
+    .map((field) => `${field} = ?`)
+    .join(', ')} WHERE idprestamo = ?`
   values.push(id)
-  const sql = `UPDATE prestamo SET ${fields.join(', ')} WHERE idprestamo = ?`
   try {
     const [result] = await pool.execute(sql, values)
     if (result.affectedRows === 0) {
