@@ -218,6 +218,7 @@ export const updatePrestamo = async (req, res) => {
   const sql = `UPDATE prestamo SET ${fields
     .map((field) => `${field} = ?`)
     .join(', ')} WHERE idprestamo = ?`
+  console.log(sql)
   values.push(id)
   try {
     const [result] = await pool.execute(sql, values)
