@@ -239,7 +239,7 @@ export const updatePrestamo = async (req, res) => {
 
 export const resumenPrestamos = async (req, res) => {
   try {
-    const sql = 'SELECT * FROM resumen_prestamo_por_laboratorio'
+    const sql = 'SELECT * FROM resumen_prestamos_por_laboratorio'
     const [result] = await pool.execute(sql)
     if (result.length === 0) {
       res.status(404).json({ status: 'error', message: 'No hay prestamos' })
